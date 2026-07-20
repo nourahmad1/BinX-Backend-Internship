@@ -1,0 +1,15 @@
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.AssemblyInfoInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.AssemblyInfo.cs
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.csproj.CoreCompileInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.sourcelink.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\bin\Debug\net10.0\TypesandControlFlow.exe
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\bin\Debug\net10.0\TypesandControlFlow.deps.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\bin\Debug\net10.0\TypesandControlFlow.runtimeconfig.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\bin\Debug\net10.0\TypesandControlFlow.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\bin\Debug\net10.0\TypesandControlFlow.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\refint\TypesandControlFlow.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\TypesandControlFlow.genruntimeconfig.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-2\TypesandControlFlow\obj\Debug\net10.0\ref\TypesandControlFlow.dll
