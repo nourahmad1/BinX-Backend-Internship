@@ -22,20 +22,20 @@ I also learned about nullable reference types. They help me handle values that c
 
 ## Task
 
-In this task, I created a small console program that shows:
+In this task, I created a small C# console application to practice the fundamentals I learned.
 
-- Different value type variables.
-- Different reference type variables.
-- The difference between copying values and references.
-- A grade calculator using switch expression.
-- Safe handling of user input when the value can be null.
+The program demonstrates how different types of variables work in C#:
 
+- Created and displayed different **value type variables** such as `int`, `double`, and `bool`.
+- Created and displayed different **reference type variables** such as `string` and arrays.
+- Practiced the difference between copying values and copying references:
+  - Value types create a separate copy, so changing one variable does not affect the original variable.
+  - Reference types point to the same object, so changing the copied reference can also change the original data.
+- Built a grade calculator using a **switch expression** to convert a score into a grade description.
+- Handled user input safely by checking if the entered value is `null` before using it.
 
-## My Notes
+This task helped me understand how C# stores data, how variables behave when copied, and how to write safer programs when dealing with user input.
 
-The main thing I learned today is that variables in C# do not all behave the same way. Understanding the difference between values and references will help me avoid mistakes when writing bigger programs.
-
-I also learned that checking for null values is important because user input or data from other sources may not always exist.
 
 
 ## Tools Used
