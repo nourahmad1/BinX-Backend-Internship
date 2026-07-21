@@ -55,7 +55,7 @@ class Program
      Console.WriteLine (" First = "+ first[0]);
      Console.WriteLine (" Second = "+ second[0]);
      second[0]=9;
-    Console.WriteLine ("After: ");
+     Console.WriteLine ("After: ");
      Console.WriteLine (" First = "+ first[0]);
      Console.WriteLine (" Second = "+ second[0]);
 

@@ -1,0 +1,15 @@
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\bin\Debug\net10.0\LibrarySystem.exe
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\bin\Debug\net10.0\LibrarySystem.deps.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\bin\Debug\net10.0\LibrarySystem.runtimeconfig.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\bin\Debug\net10.0\LibrarySystem.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\bin\Debug\net10.0\LibrarySystem.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.AssemblyInfoInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.AssemblyInfo.cs
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.csproj.CoreCompileInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.sourcelink.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\refint\LibrarySystem.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\LibrarySystem.genruntimeconfig.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-3\LibrarySystem\obj\Debug\net10.0\ref\LibrarySystem.dll
