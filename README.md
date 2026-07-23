@@ -137,4 +137,4 @@ The main concepts I practiced were:
 The biggest thing I learned is that backend development is not only about writing code that works. It is also about writing organized code, choosing the right approach, and following a professional workflow.
 
 This week gave me the foundation I need to continue learning ASP.NET Core and start building more advanced backend applications.
-```
+
