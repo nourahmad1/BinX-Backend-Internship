@@ -88,3 +88,53 @@ I also learned the basics of async/await and why asynchronous programming is imp
 The last day was about learning how developers manage their code in real projects.
 
 I practiced the Git workflow:
+
+```
+Create Branch
+      ↓
+Make Changes
+      ↓
+Commit Changes
+      ↓
+Push to GitHub
+      ↓
+Open Pull Request
+```
+
+Commands I practiced:
+
+```bash
+git status
+git branch
+git switch
+git add
+git commit
+git push
+```
+
+I learned why developers use feature branches instead of directly working on the main branch. This keeps the main branch stable and makes it easier to review and manage changes.
+
+I also learned the importance of writing clear commit messages because they explain what was changed and help other developers understand the project history.
+
+Pull Requests were another important part of this workflow. I learned how they allow developers to review changes, discuss improvements, and merge code safely into the main branch.
+
+---
+
+## Week 1 Summary
+
+After completing my first week, I have a better understanding of the foundation needed for backend development using .NET.
+
+During this week, I moved from writing simple C# code to understanding how real projects are structured, designed, and managed.
+
+The main concepts I practiced were:
+
+- .NET project setup and CLI commands.
+- C# fundamentals and nullable reference types.
+- Object-oriented programming concepts.
+- Collections, LINQ, and async/await.
+- Git and GitHub workflow.
+
+The biggest thing I learned is that backend development is not only about writing code that works. It is also about writing organized code, choosing the right approach, and following a professional workflow.
+
+This week gave me the foundation I need to continue learning ASP.NET Core and start building more advanced backend applications.
+```
