@@ -1,0 +1,15 @@
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\bin\Debug\net10.0\GenericRepositoryLab.exe
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\bin\Debug\net10.0\GenericRepositoryLab.deps.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\bin\Debug\net10.0\GenericRepositoryLab.runtimeconfig.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\bin\Debug\net10.0\GenericRepositoryLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\bin\Debug\net10.0\GenericRepositoryLab.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.AssemblyInfoInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.AssemblyInfo.cs
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.csproj.CoreCompileInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.sourcelink.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\refint\GenericRepositoryLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\GenericRepositoryLab.genruntimeconfig.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-1\GenericRepositoryLab\obj\Debug\net10.0\ref\GenericRepositoryLab.dll

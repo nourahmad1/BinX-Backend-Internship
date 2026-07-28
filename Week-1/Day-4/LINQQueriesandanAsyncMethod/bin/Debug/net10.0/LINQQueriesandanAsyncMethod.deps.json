@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "LINQQueriesandanAsyncMethod/1.0.0": {
+        "runtime": {
+          "LINQQueriesandanAsyncMethod.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LINQQueriesandanAsyncMethod/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,15 @@
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\bin\Debug\net10.0\LINQQueriesandanAsyncMethod.exe
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\bin\Debug\net10.0\LINQQueriesandanAsyncMethod.deps.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\bin\Debug\net10.0\LINQQueriesandanAsyncMethod.runtimeconfig.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\bin\Debug\net10.0\LINQQueriesandanAsyncMethod.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\bin\Debug\net10.0\LINQQueriesandanAsyncMethod.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.AssemblyInfoInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.AssemblyInfo.cs
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.csproj.CoreCompileInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.sourcelink.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\refint\LINQQueriesandanAsyncMethod.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\LINQQueriesandanAsyncMethod.genruntimeconfig.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-1\Day-4\LINQQueriesandanAsyncMethod\obj\Debug\net10.0\ref\LINQQueriesandanAsyncMethod.dll

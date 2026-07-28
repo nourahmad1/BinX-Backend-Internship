@@ -1,0 +1,15 @@
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\bin\Debug\net10.0\LinqLab.exe
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\bin\Debug\net10.0\LinqLab.deps.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\bin\Debug\net10.0\LinqLab.runtimeconfig.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\bin\Debug\net10.0\LinqLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\bin\Debug\net10.0\LinqLab.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.AssemblyInfoInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.AssemblyInfo.cs
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.csproj.CoreCompileInputs.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.sourcelink.json
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\refint\LinqLab.dll
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.pdb
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\LinqLab.genruntimeconfig.cache
+C:\Users\nourb\OneDrive\Desktop\backend\BinX-Backend-Internship\Week-2\Day-2\LinqLab\obj\Debug\net10.0\ref\LinqLab.dll
