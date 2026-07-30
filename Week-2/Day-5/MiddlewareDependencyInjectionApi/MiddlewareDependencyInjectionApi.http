@@ -1,0 +1,6 @@
+@MiddlewareDependencyInjectionApi_HostAddress = http://localhost:5130
+
+GET {{MiddlewareDependencyInjectionApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

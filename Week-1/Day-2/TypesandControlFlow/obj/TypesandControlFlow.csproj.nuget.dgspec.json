@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\BinX-Backend-Internship\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj": {}
+    "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\BinX-Backend-Internship\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj": {
+    "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\BinX-Backend-Internship\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj",
+        "projectUniqueName": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj",
         "projectName": "TypesandControlFlow",
-        "projectPath": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\BinX-Backend-Internship\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj",
-        "packagesPath": "C:\\Users\\nourb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\BinX-Backend-Internship\\Week-1\\Day-2\\TypesandControlFlow\\obj\\",
+        "projectPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-2\\TypesandControlFlow\\TypesandControlFlow.csproj",
+        "packagesPath": "C:\\Users\\emana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-2\\TypesandControlFlow\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nourb\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\emana\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\HelloBinX\\DotnetProjects\\HelloBinX\\HelloBinX.csproj": {}
+    "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-1\\HelloBinX\\HelloBinX.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\HelloBinX\\DotnetProjects\\HelloBinX\\HelloBinX.csproj": {
+    "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-1\\HelloBinX\\HelloBinX.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\HelloBinX\\DotnetProjects\\HelloBinX\\HelloBinX.csproj",
+        "projectUniqueName": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-1\\HelloBinX\\HelloBinX.csproj",
         "projectName": "HelloBinX",
-        "projectPath": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\HelloBinX\\DotnetProjects\\HelloBinX\\HelloBinX.csproj",
-        "packagesPath": "C:\\Users\\nourb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nourb\\OneDrive\\Desktop\\backend\\HelloBinX\\DotnetProjects\\HelloBinX\\obj\\",
+        "projectPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-1\\HelloBinX\\HelloBinX.csproj",
+        "packagesPath": "C:\\Users\\emana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-1\\Day-1\\HelloBinX\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nourb\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\emana\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"

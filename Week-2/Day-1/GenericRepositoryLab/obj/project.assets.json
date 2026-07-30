@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\emana\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\GenericRepositoryLab.csproj",
+      "projectUniqueName": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\GenericRepositoryLab.csproj",
       "projectName": "GenericRepositoryLab",
-      "projectPath": "C:\\Users\\emana\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\GenericRepositoryLab.csproj",
+      "projectPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\GenericRepositoryLab.csproj",
       "packagesPath": "C:\\Users\\emana\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\emana\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\obj\\",
+      "outputPath": "C:\\Users\\emana\\OneDrive\\Desktop\\Nour\\BinX-Backend-Internship-main\\BinX-Backend-Internship-main\\Week-2\\Day-1\\GenericRepositoryLab\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\emana\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LINQQueriesandanAsyncMethod")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79e9d1d61a5679f80d35616b80b155dfc0c7ec22")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c67304745967d8b97087b279f3648a8bae3f466b")]
 [assembly: System.Reflection.AssemblyProductAttribute("LINQQueriesandanAsyncMethod")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LINQQueriesandanAsyncMethod")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
