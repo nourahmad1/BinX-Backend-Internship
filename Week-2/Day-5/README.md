@@ -2,112 +2,71 @@
 
 ## Overview
 
-In Day 5, I learned how ASP.NET Core handles incoming requests using the Middleware Pipeline and how Dependency Injection (DI) is used to manage services and dependencies.
+Day 5 focuses on understanding two important concepts in ASP.NET Core: the Middleware Pipeline and Dependency Injection.
 
-The main goal of this task was to create a custom middleware, understand middleware execution order, create a service using an interface, register it using the built-in Dependency Injection container, and inject it into a controller using Constructor Injection.
+The purpose of this day is to understand how ASP.NET Core processes incoming HTTP requests, how middleware components work together, and how services are managed and provided throughout the application using the built-in Dependency Injection system.
 
 ## What I Learned
 
-During this task, I learned how the ASP.NET Core Middleware Pipeline works and how each middleware component executes in the order it is registered. I also learned how middleware can inspect incoming requests, perform actions, and pass the request to the next component.
+During this day, I learned:
 
-I learned why middleware ordering is important and how incorrect ordering can affect application behavior.
+- How the ASP.NET Core Middleware Pipeline works and how requests move through a sequence of middleware components.
+- How the order of middleware registration affects request execution and application behavior.
+- The role of built-in middleware such as HTTPS Redirection, Routing, Authentication, and Authorization.
+- How to create and use custom middleware for handling common application concerns like logging and request processing.
+- What Dependency Injection is and why it is used in modern application development.
+- How to register services inside the ASP.NET Core DI container.
+- The differences between service lifetimes:
+  - Transient
+  - Scoped
+  - Singleton
+- How Constructor Injection allows controllers and services to receive their required dependencies automatically.
+- Why using interfaces and dependency injection improves code flexibility, maintainability, and testability.
 
-I also learned about Dependency Injection and how it helps create loosely coupled and maintainable applications. I practiced working with different service lifetimes:
+## Day 5 Topics
 
-- Transient: A new instance is created every time the service is requested.
-- Scoped: One instance is created per HTTP request.
-- Singleton: One instance is created for the entire application lifetime.
+The main topics covered in this day were:
 
-## Task Implementation
+### Middleware Pipeline
 
-I created a custom middleware called `RequestLoggingMiddleware` that logs incoming HTTP requests by displaying the HTTP method and request path in the console.
+Understanding how every HTTP request passes through a chain of middleware components and how each component can process the request before and after passing it to the next component.
 
-Example:
+### Middleware Ordering
 
-Request: GET /books
-Request: GET /books/1
+Learning that middleware execution order is important because each middleware depends on its position in the request pipeline.
 
-The middleware was registered inside `Program.cs` using:
+### Dependency Injection
 
-```csharp
-app.UseMiddleware<RequestLoggingMiddleware>();
+Understanding how ASP.NET Core manages object creation and provides required services automatically instead of creating dependencies manually.
 
-I also tested changing the middleware order to understand how the execution order affects the request pipeline.
+### Service Lifetimes
 
-For Dependency Injection, I created a service layer responsible for handling book data. The service contains:
-	•	IBookService interface
-	•	BookService implementation
+Learning when to use each service lifetime depending on how long the service instance should live:
 
-The service was registered using Scoped lifetime:
+- Transient for short-lived services.
+- Scoped for services that should exist during a single request.
+- Singleton for services shared throughout the whole application.
 
-builder.Services.AddScoped<IBookService, BookService>();
+### Constructor Injection
 
-This allows ASP.NET Core to create and provide the required service automatically.
+Learning how controllers receive required services through constructors and how this approach helps achieve cleaner and more maintainable code.
 
-I applied Constructor Injection by injecting IBookService into BooksController instead of creating the service manually.
+## Hands-On Practice
 
-Example:
+The practical task for this day focused on applying Middleware and Dependency Injection concepts by creating a custom middleware, working with services, registering dependencies, and using injected services inside controllers.
 
-public BooksController(IBookService bookService)
-{
-    _bookService = bookService;
-}
+## Technologies Used
 
-This makes the application more flexible, maintainable, and easier to test.
+- C#
+- ASP.NET Core Web API
+- .NET
+- Dependency Injection
+- Middleware Pipeline
+- Git & GitHub
+- Postman
 
-API Endpoints
+## Summary
 
-Get all books:
+Day 5 provided a deeper understanding of ASP.NET Core application structure by learning how requests are handled through middleware and how dependencies are managed using Dependency Injection.
 
-GET /books
-
-Response:
-
-[
-  "C#",
-  "ASP.NET Core",
-  "SQL"
-]
-
-Get book by id:
-
-GET /books/{id}
-
-Example:
-
-GET /books/1
-
-Response:
-
-Book number 1
-
-Project Structure
-
-MiddlewareDependencyInjectionApi
-
-│── Controllers
-│   └── BooksController.cs
-│
-│── Middleware
-│   └── RequestLoggingMiddleware.cs
-│
-│── Services
-│   ├── IBookService.cs
-│   └── BookService.cs
-│
-└── Program.cs
-
-Technologies Used
-	•	C#
-	•	ASP.NET Core Web API
-	•	.NET 10
-	•	Dependency Injection
-	•	Middleware Pipeline
-	•	Postman
-	•	Git & GitHub
-
-Summary
-
-This task helped me understand how ASP.NET Core processes HTTP requests through middleware and how Dependency Injection improves application structure by separating responsibilities between controllers and services.
-
-I practiced creating custom middleware, registering services with the correct lifetime, applying Constructor Injection, and building a cleaner API structure following ASP.NET Core best practices.
+These concepts are essential for building scalable, organized, and maintainable backend applications.
