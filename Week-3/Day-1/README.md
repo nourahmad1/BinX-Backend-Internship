@@ -101,9 +101,9 @@ Returns all tasks that belong to a specific user.
 
 ## Postman Test Cases
 
-  ----------------------------------------------------------------------------------- ----------------------------
-  Test ID        Method         Endpoint                Expected       Result         Screenshot
-  -------------- -------------- ----------------------- -------------- -------------- ----------------------------
+  ----------------------------------------------------------------------------------- 
+  Test ID        Method         Endpoint                Expected       Result         
+  -------------- -------------- ----------------------- -------------- -------------- 
   TC-001         GET            /api/v1/users           200 OK         PASS           ![alt text](image-2.png)
 
   TC-002         GET            /api/v1/users/1         200 OK         PASS           ![alt text](image-1.png)
@@ -143,6 +143,8 @@ Returns all tasks that belong to a specific user.
 
  2. Postman Collection
     ![alt text](image-16.png)
+
+    
 
 ------------------------------------------------------------------------
 
