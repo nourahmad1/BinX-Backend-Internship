@@ -2,175 +2,188 @@
 
 ## Project Overview
 
-Task Tracker API is a simple RESTful Web API built with ASP.NET Core
-(.NET 10). The project manages users and their tasks while following
-REST principles learned during training.
+Task Tracker API is a RESTful Web API built with **ASP.NET Core (.NET 10)**. The project manages users and their tasks while following RESTful API principles learned during the training program.
 
-### Features
+## Features
 
--   User CRUD operations
--   Task CRUD operations
--   Nested resource: `/api/v1/users/{id}/tasks`
--   API versioning using `/api/v1`
--   Correct HTTP status codes
--   Tested using Postman
--   Documented with Swagger
+- User CRUD operations
+- Task CRUD operations
+- Nested resource (`/api/v1/users/{id}/tasks`)
+- API Versioning (`/api/v1`)
+- Proper HTTP status codes
+- Swagger API documentation
+- Postman API testing
+- In-memory data storage using LINQ
 
-------------------------------------------------------------------------
+---
 
-## Technologies Used
+# Technologies Used
 
--   C#
--   ASP.NET Core Web API
--   .NET 10
--   LINQ
--   Swagger (OpenAPI)
--   Postman
--   Git & GitHub
+- C#
+- ASP.NET Core Web API
+- .NET 10
+- LINQ
+- Swagger (OpenAPI)
+- Postman
+- Git & GitHub
 
-------------------------------------------------------------------------
+---
 
-## Project Structure
+# Project Structure
 
-``` text
+```text
 TaskTrackerApi
 │
 ├── Controllers
 │   ├── UsersController.cs
 │   └── TasksController.cs
+│
 ├── Models
 │   ├── User.cs
 │   └── TaskItem.cs
+│
 ├── Data
 │   └── AppData.cs
+│
 ├── Program.cs
 └── TaskTrackerApi.csproj
 ```
 
-------------------------------------------------------------------------
+---
 
-## REST API Endpoints
+# REST API Endpoints
 
-### Users
+## Users
 
-  Method   Endpoint             Description         Success
-  -------- -------------------- ------------------- ----------------
-  GET      /api/v1/users        Get all users       200 OK
-  GET      /api/v1/users/{id}   Get user by ID      200 OK
-  POST     /api/v1/users        Create a new user   201 Created
-  PUT      /api/v1/users/{id}   Update a user       200 OK
-  DELETE   /api/v1/users/{id}   Delete a user       204 No Content
+| Method | Endpoint | Description | Status |
+|---------|----------|-------------|--------|
+| GET | `/api/v1/users` | Get all users | 200 OK |
+| GET | `/api/v1/users/{id}` | Get user by ID | 200 OK |
+| POST | `/api/v1/users` | Create user | 201 Created |
+| PUT | `/api/v1/users/{id}` | Update user | 200 OK |
+| DELETE | `/api/v1/users/{id}` | Delete user | 204 No Content |
 
-### Tasks
+---
 
-  Method   Endpoint             Description         Success
-  -------- -------------------- ------------------- ----------------
-  GET      /api/v1/tasks        Get all tasks       200 OK
-  GET      /api/v1/tasks/{id}   Get task by ID      200 OK
-  POST     /api/v1/tasks        Create a new task   201 Created
-  PUT      /api/v1/tasks/{id}   Update a task       200 OK
-  DELETE   /api/v1/tasks/{id}   Delete a task       204 No Content
+## Tasks
 
-### Nested Resource
+| Method | Endpoint | Description | Status |
+|---------|----------|-------------|--------|
+| GET | `/api/v1/tasks` | Get all tasks | 200 OK |
+| GET | `/api/v1/tasks/{id}` | Get task by ID | 200 OK |
+| POST | `/api/v1/tasks` | Create task | 201 Created |
+| PUT | `/api/v1/tasks/{id}` | Update task | 200 OK |
+| DELETE | `/api/v1/tasks/{id}` | Delete task | 204 No Content |
 
-`GET /api/v1/users/{id}/tasks`
+---
 
-Returns all tasks that belong to a specific user.
+## Nested Resource
 
-------------------------------------------------------------------------
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/users/{id}/tasks` | Get all tasks for a specific user |
 
-## HTTP Status Codes
+---
 
-  Code   Meaning       Used For
-  ------ ------------- -------------------------
-  200    OK            Successful GET and PUT
-  201    Created       Successful POST
-  204    No Content    Successful DELETE
-  400    Bad Request   Invalid request
-  404    Not Found     Resource does not exist
+# HTTP Status Codes
 
-------------------------------------------------------------------------
+| Code | Meaning | Purpose |
+|------|---------|---------|
+| 200 | OK | Successful GET or PUT |
+| 201 | Created | Resource created successfully |
+| 204 | No Content | Resource deleted successfully |
+| 400 | Bad Request | Invalid request |
+| 404 | Not Found | Resource not found |
 
-## LINQ Used
+---
 
--   `Where()`
--   `FirstOrDefault()`
--   `Any()`
+# LINQ Methods Used
 
-------------------------------------------------------------------------
+- `Where()`
+- `FirstOrDefault()`
+- `Any()`
 
-## Postman Test Cases
+---
 
-  ----------------------------------------------------------------------------------- 
-  Test ID        Method         Endpoint                Expected       Result         
-  -------------- -------------- ----------------------- -------------- -------------- 
-  TC-001         GET            /api/v1/users           200 OK         PASS           ![alt text](image-2.png)
+# Postman Test Cases
 
-  TC-002         GET            /api/v1/users/1         200 OK         PASS           ![alt text](image-1.png)
+| Test ID | Method | Endpoint | Expected Result | Status | Screenshot |
+|---------|--------|----------|-----------------|--------|------------|
+| TC-001 | GET | `/api/v1/users` | 200 OK | ✅ PASS | <img src="image-2.png" width="350"/> |
+| TC-002 | GET | `/api/v1/users/1` | 200 OK | ✅ PASS | <img src="image-1.png" width="350"/> |
+| TC-003 | GET | `/api/v1/users/99` | 404 Not Found | ✅ PASS | <img src="image-3.png" width="350"/> |
+| TC-004 | POST | `/api/v1/users` | 201 Created | ✅ PASS | <img src="image-4.png" width="350"/> |
+| TC-005 | PUT | `/api/v1/users/1` | 200 OK | ✅ PASS | <img src="image-5.png" width="350"/> |
+| TC-006 | DELETE | `/api/v1/users/1` | 204 No Content | ✅ PASS | <img src="image-6.png" width="350"/> |
+| TC-007 | GET | `/api/v1/tasks` | 200 OK | ✅ PASS | <img src="image-7.png" width="350"/> |
+| TC-008 | GET | `/api/v1/tasks/1` | 200 OK | ✅ PASS | <img src="image-8.png" width="350"/> |
+| TC-009 | GET | `/api/v1/tasks/99` | 404 Not Found | ✅ PASS | <img src="image-9.png" width="350"/> |
+| TC-010 | POST | `/api/v1/tasks` | 201 Created | ✅ PASS | <img src="image-10.png" width="350"/> |
+| TC-011 | POST | `/api/v1/tasks` (Invalid UserId) | 400 Bad Request | ✅ PASS | <img src="image-11.png" width="350"/> |
+| TC-012 | PUT | `/api/v1/tasks/1` | 200 OK | ✅ PASS | <img src="image-12.png" width="350"/> |
+| TC-013 | DELETE | `/api/v1/tasks/1` | 204 No Content | ✅ PASS | <img src="image-13.png" width="350"/> |
+| TC-014 | GET | `/api/v1/users/1/tasks` | 200 OK | ✅ PASS | <img src="image-14.png" width="350"/> |
 
-  TC-003         GET            /api/v1/users/99        404 Not Found  PASS           ![alt text](image-3.png)
+---
 
-  TC-004         POST           /api/v1/users           201 Created    PASS           ![alt text](image-4.png)
+# Screenshots
 
-  TC-005         PUT            /api/v1/users/1         200 OK         PASS           ![alt text](image-5.png)
+## Swagger
 
-  TC-006         DELETE         /api/v1/users/1         204 No Content PASS           ![alt text](image-6.png)
+<p align="center">
+<img src="image-15.png" width="850"/>
+</p>
 
-  TC-007         GET            /api/v1/tasks           200 OK         PASS           ![alt text](image-7.png)
+---
 
-  TC-008         GET            /api/v1/tasks/1         200 OK         PASS           ![alt text](image-8.png)
-  
-  TC-009         GET            /api/v1/tasks/99        404 Not Found  PASS           ![alt text](image-9.png)         
+## Postman Collection
 
-  TC-010         POST           /api/v1/tasks           201 Created    PASS           ![alt text](image-10.png)         
+<p align="center">
+<img src="image-16.png" width="850"/>
+</p>
 
-  TC-011         POST           /api/v1/tasks (invalid  400 Bad        PASS           ![alt text](image-11.png)
-                                UserId)                 Request        
+---
 
-  TC-012         PUT            /api/v1/tasks/1         200 OK         PASS           ![alt text](image-12.png)
+# How to Run
 
-  TC-013         DELETE         /api/v1/tasks/1         204 No Content PASS           ![alt text](image-13.png)
+Clone the repository:
 
-  TC-014        GET            /api/v1/users/1/tasks   200 OK         PASS            ![alt text](image-14.png)  
-  -----------------------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-## Screenshots
-
- 1. Swagger home page
-    ![alt text](image-15.png)
-
- 2. Postman Collection
-    ![alt text](image-16.png)
-
-    
-
-------------------------------------------------------------------------
-
-## How to Run
-
-``` bash
+```bash
 git clone <repository-url>
+```
+
+Navigate to the project:
+
+```bash
 cd TaskTrackerApi
+```
+
+Run the application:
+
+```bash
 dotnet run
 ```
 
-Open:
+Open Swagger:
 
-`http://localhost:5138/swagger`
+```
+http://localhost:5138/swagger
+```
 
-------------------------------------------------------------------------
+---
 
-## What I Learned
+# What I Learned
 
--   REST API design
--   Resource naming
--   HTTP methods
--   HTTP status codes
--   API versioning
--   Controllers and routing
--   LINQ basics
--   Swagger
--   Postman API testing
--   GitHub project documentation
+During this project, I learned how to:
+
+- Build RESTful APIs using ASP.NET Core.
+- Design resources following REST conventions.
+- Implement CRUD operations.
+- Create nested resources.
+- Apply API versioning.
+- Return appropriate HTTP status codes.
+- Use LINQ for querying in-memory data.
+- Test APIs with Postman.
+- Document APIs using Swagger.
+- Organize ASP.NET Core projects using Controllers, Models, and Data folders.
+- Document and publish projects professionally on GitHub.
