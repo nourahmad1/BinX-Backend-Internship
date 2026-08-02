@@ -1,0 +1,372 @@
+{
+  "info": {
+    "_postman_id": "d48d6936-7ea3-47ad-9baf-d28f2eb86769",
+    "name": "Task Tracker API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Users",
+      "id": "3e96afab-3c1f-4908-9b7a-75bd27920a00",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User By ID",
+      "id": "d6e0cf7c-a557-44e5-9fd9-2305f5f8bea2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Not Found",
+      "id": "5307b1ed-5bd8-44bc-8fee-f6e887a82dd5",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users/99",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create New User",
+      "id": "bd1d3346-4d2f-4190-b30d-c64addd458a5",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Nour\",\r\n    \"email\":\"nour@tesy.com\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update User",
+      "id": "90b4bb75-8539-4d0b-9127-9dcaa3b4ce0c",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Nour Updated\",\r\n\"email\":\"nournew@test.com\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "id": "9e4c595a-bf83-4665-b7fd-7f47c3102704",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Tasks",
+      "id": "a3f35102-b918-419c-a08c-7d0f61fe7785",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Task By ID",
+      "id": "32145cf0-71b2-44bd-ad1c-25e743b7933d",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Task Not Found",
+      "id": "bbc9660d-d522-4bd3-a01c-c288fd67df6c",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks/99",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks",
+            "99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create New Task",
+      "id": "1ada6e8c-939d-468e-9770-3506ac91deec",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\r\n        \"title\": \"Test API Using Postman\",\r\n        \"description\": \"Create test cases\",\r\n        \"isCompleted\": false,\r\n        \"userId\": 1\r\n    }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Task With Invalid User",
+      "id": "2469e263-0bcf-4c37-8dc5-cd0e50f9138a",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n     \r\n        \"title\": \"Wrong Task\",\r\n        \"description\": \"Testting Error\",\r\n        \"isCompleted\": false,\r\n        \"userId\":999\r\n    }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Task",
+      "id": "e67579fe-87f8-4124-98bc-2e6f119d367a",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n        \"id\": 1,\r\n        \"title\": \"Updated Task\",\r\n        \"description\": \"Updated description\",\r\n        \"isCompleted\": true,\r\n        \"userId\": 1\r\n    }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Task",
+      "id": "34cc07c4-3a4a-40b1-bcab-8ab864346d52",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/tasks/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "tasks",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Nested Resources",
+      "id": "e8761ddc-1846-40ea-93cb-9651585905c9",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5138/api/v1/users/1/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5138",
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "1",
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
