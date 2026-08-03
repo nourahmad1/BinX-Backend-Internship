@@ -436,6 +436,7 @@ Users 1 -------- * Tasks
 Meaning:
 
 One User can have many Tasks.
+<img width="988" height="594" alt="image" src="https://github.com/user-attachments/assets/2b86d9bc-4b85-4b85-b9b8-6aee6bbfed5e" />
 
 ---
 
