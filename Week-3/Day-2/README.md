@@ -494,6 +494,16 @@ CreatedAt DATETIME2
 ```
 
 ---
+# 🛠️ Tools Used
+
+The following tools were used during the database design and documentation process:
+
+| Tool | Purpose |
+|---|---|
+| SQL Server Management Studio (SSMS) | Database management and SQL Server development |
+| draw.io (diagrams.net) | Creating ERD diagrams and documenting database relationships |
+| Entity Relationship Diagram (ERD) Notation | Visualizing entities, attributes, keys, and relationships |
+| GitHub | Version control and project documentation |
 
 
 # Conclusion
