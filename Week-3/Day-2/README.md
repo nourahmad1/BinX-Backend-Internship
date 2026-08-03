@@ -4,7 +4,7 @@
 
 This document explains the database schema design for the Task Tracker API.
 
-The goal of this design is to create a clean, normalized, and scalable database structure before implementing the API using ASP.NET Core and Entity Framework Core.
+The goal of this design is to create a clean, normalized, and scalable database structure.
 
 The design focuses on:
 
