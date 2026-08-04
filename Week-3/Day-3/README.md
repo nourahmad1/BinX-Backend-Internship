@@ -1,28 +1,196 @@
 # Task Tracker API
 
-## Overview
+## Week 3 - Day 3 Backend Development Task
 
-Task Tracker API is a RESTful Web API built using **ASP.NET Core (.NET 10)** and **Entity Framework Core**.
+## Project Overview
 
-The purpose of this project is to practice building a backend API with a clean structure, database integration, migrations, and CRUD operations.
+Task Tracker API is a RESTful Web API developed using **ASP.NET Core (.NET 10)**.
 
-The API manages users and their tasks using a relational database with a one-to-many relationship:
+The goal of this project is to practice building a real backend application by connecting an ASP.NET Core API with a SQL Server database using **Entity Framework Core**.
 
-* One User can have many Tasks.
-* Each Task belongs to one User.
+The application manages users and their tasks through CRUD operations while following REST API principles and clean backend development practices.
+
+The project demonstrates:
+
+* Creating Web API controllers
+* Working with Entity Framework Core
+* Database-first communication using migrations
+* SQL Server integration
+* Entity relationships
+* DTO pattern implementation
+* Input validation
+* API testing using Swagger
 
 ---
 
-# Technologies Used
+# Development Environment
 
-* ASP.NET Core Web API (.NET 10)
+## Framework
+
+* .NET 10
+* ASP.NET Core Web API
+
+## Programming Language
+
 * C#
-* Entity Framework Core 10
+
+## Database
+
 * SQL Server LocalDB
-* LINQ
-* Swagger / OpenAPI
-* Entity Framework Core Migrations
-* Git & GitHub
+
+## IDE / Editor
+
+* Visual Studio Code
+
+## Operating System
+
+* Windows
+
+---
+
+# Tools Used
+
+## .NET CLI
+
+Used for creating, building, running, and managing the project.
+
+Commands used:
+
+```bash
+dotnet --version
+```
+
+Check installed .NET SDK version.
+
+```bash
+dotnet build
+```
+
+Compile the project and verify that there are no build errors.
+
+```bash
+dotnet run
+```
+
+Run the ASP.NET Core Web API.
+
+```bash
+dotnet restore
+```
+
+Restore project dependencies.
+
+---
+
+## Entity Framework Core Tools
+
+Used for database management and migrations.
+
+Installation:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Check EF Core tools:
+
+```bash
+dotnet ef --version
+```
+
+Used commands:
+
+Create migration:
+
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+Apply migration:
+
+```bash
+dotnet ef database update
+```
+
+List migrations:
+
+```bash
+dotnet ef migrations list
+```
+
+---
+
+## Swagger / OpenAPI
+
+Swagger was used to document and test API endpoints.
+
+Benefits:
+
+* View available endpoints
+* Send HTTP requests
+* Test API responses
+* Validate request models
+
+Swagger URL:
+
+```
+http://localhost:5006/swagger
+```
+
+---
+
+## SQL Server LocalDB
+
+Used as the relational database.
+
+The database stores:
+
+* Users
+* Tasks
+* Relationships between entities
+
+Database created:
+
+```
+TaskTrackerDb
+```
+
+---
+
+## Git & GitHub
+
+Used for:
+
+* Source code management
+* Tracking changes
+* Version control
+* Submitting project progress
+
+Common commands:
+
+```bash
+git status
+```
+
+Check project changes.
+
+```bash
+git add .
+```
+
+Stage changes.
+
+```bash
+git commit -m "message"
+```
+
+Save changes.
+
+```bash
+git push
+```
+
+Upload changes to GitHub.
 
 ---
 
@@ -30,6 +198,7 @@ The API manages users and their tasks using a relational database with a one-to-
 
 ```
 TaskTrackerApi
+
 │
 ├── Controllers
 │   ├── UsersController.cs
@@ -57,70 +226,122 @@ TaskTrackerApi
 
 ---
 
-# Features Implemented
+# Architecture Explanation
 
-## User Management
+The project follows a simple layered structure.
 
-The API supports:
+## Entities Layer
 
-* Get all users
-* Get user by ID
-* Create new users
-* Delete users
+Contains database models.
+
+Example:
+
+```
+User
+TaskItem
+```
+
+These classes represent database tables.
 
 ---
 
-## Task Management
+## DTO Layer
 
-The API supports:
+DTOs are used to control data sent between client and API.
 
-* Get all tasks
-* Get task by ID
-* Create tasks
-* Update tasks
-* Delete tasks
+Examples:
+
+```
+UserCreateDto
+TaskCreateDto
+TaskUpdateDto
+```
+
+Benefits:
+
+* Prevent exposing database entities
+* Control incoming data
+* Add validation rules
+* Improve API security
+
+---
+
+## Controller Layer
+
+Controllers handle HTTP requests.
+
+Responsibilities:
+
+* Receive requests
+* Validate input
+* Communicate with database
+* Return responses
+
+Controllers:
+
+```
+UsersController
+TasksController
+```
+
+---
+
+## Data Layer
+
+Contains:
+
+```
+AppDbContext
+```
+
+It manages communication between Entity Framework Core and SQL Server.
 
 ---
 
 # Database Design
 
-The project uses Entity Framework Core Code First approach.
+The project uses a One-to-Many relationship.
 
-Database relationship:
+Relationship:
 
 ```
 User
  |
- | 1 : Many
  |
-TaskItem
+ |  One User
+ |
+ |
+Many Tasks
 ```
 
 Example:
 
-```
-Users Table
+## Users Table
 
-Id
-Name
-Email
-
-
-Tasks Table
-
-Id
-Title
-IsCompleted
-UserId
-```
-
-`UserId` is a foreign key connecting tasks with users.
+| Column | Type     |
+| ------ | -------- |
+| Id     | int      |
+| Name   | nvarchar |
+| Email  | nvarchar |
 
 ---
 
-# Entity Framework Core Setup
+## Tasks Table
 
-The project uses:
+| Column      | Type     |
+| ----------- | -------- |
+| Id          | int      |
+| Title       | nvarchar |
+| IsCompleted | bit      |
+| UserId      | int      |
+
+`UserId` works as a foreign key.
+
+---
+
+# Entity Framework Core Implementation
+
+The database context contains:
 
 ```csharp
 public DbSet<User> Users => Set<User>();
@@ -128,39 +349,18 @@ public DbSet<User> Users => Set<User>();
 public DbSet<TaskItem> Tasks => Set<TaskItem>();
 ```
 
-These properties allow Entity Framework Core to track and manage database tables.
+These properties allow EF Core to:
+
+* Track entities
+* Create tables
+* Execute queries
+* Save changes
 
 ---
 
-# Migrations
+# Implemented Features
 
-The database was created using EF Core migrations.
-
-Commands used:
-
-Create migration:
-
-```bash
-dotnet ef migrations add InitialCreate
-```
-
-Apply migration:
-
-```bash
-dotnet ef database update
-```
-
-Create validation changes:
-
-```bash
-dotnet ef migrations add AddUserValidation
-```
-
----
-
-# API Endpoints
-
-## Users
+## User Features
 
 ### Get All Users
 
@@ -168,13 +368,17 @@ dotnet ef migrations add AddUserValidation
 GET /api/users
 ```
 
+Returns all users.
+
 ---
 
-### Get User By Id
+### Get User By ID
 
 ```
 GET /api/users/{id}
 ```
+
+Returns specific user.
 
 ---
 
@@ -184,12 +388,12 @@ GET /api/users/{id}
 POST /api/users
 ```
 
-Request:
+Example request:
 
 ```json
 {
-  "name": "Nour",
-  "email": "nour@test.com"
+"name":"Nour",
+"email":"nour@test.com"
 }
 ```
 
@@ -203,59 +407,51 @@ DELETE /api/users/{id}
 
 ---
 
-# Tasks
+# Task Features
 
-### Get All Tasks
+## Get All Tasks
 
 ```
 GET /api/tasks
 ```
 
----
-
-### Get Task By Id
+## Get Task By ID
 
 ```
 GET /api/tasks/{id}
 ```
 
----
-
-### Create Task
+## Create Task
 
 ```
 POST /api/tasks
 ```
 
-Request:
+Example:
 
 ```json
 {
-  "title": "Learn Entity Framework Core",
-  "userId": 1
+"title":"Learn EF Core",
+"userId":1
 }
 ```
 
----
-
-### Update Task
+## Update Task
 
 ```
 PUT /api/tasks/{id}
 ```
 
-Request:
+Example:
 
 ```json
 {
-  "title": "Finish API",
-  "isCompleted": true
+"title":"Complete API",
+"isCompleted":true
 }
 ```
 
----
-
-### Delete Task
+## Delete Task
 
 ```
 DELETE /api/tasks/{id}
@@ -265,129 +461,118 @@ DELETE /api/tasks/{id}
 
 # Validation
 
-DTO validation was implemented using Data Annotations.
+Validation was implemented using Data Annotations.
 
-Examples:
+Example:
 
 ```csharp
 [Required]
 [MaxLength(100)]
-public string Name { get; set; }
+public string Name {get;set;}
 ```
 
-Validation prevents invalid data from being stored in the database.
+Implemented validations:
+
+* Required fields
+* Maximum length
+* Email format validation
 
 ---
 
-# DTO Usage
+# Problems Solved During Development
 
-The project uses Data Transfer Objects instead of exposing database entities directly.
+## Entity Framework Command Not Found
 
-Benefits:
-
-* Better API security
-* Separation between database and API models
-* Easier future changes
-* Cleaner responses
-
-Example:
+Problem:
 
 ```
-Client
-  |
-  |
-DTO
-  |
-  |
-Controller
-  |
-  |
-Entity
-  |
-  |
-Database
+dotnet ef command not found
+```
+
+Solution:
+
+Installed EF Core CLI:
+
+```
+dotnet tool install --global dotnet-ef
 ```
 
 ---
 
-# Running the Project
+## SQL Server Connection Problem
 
-Clone the repository:
+Problem:
 
-```bash
-git clone <repository-url>
+LocalDB instance was not running.
+
+Solution:
+
+Started SQL LocalDB:
+
+```
+sqllocaldb start MSSQLLocalDB
 ```
 
-Navigate to project folder:
+Then applied migrations:
 
-```bash
-cd TaskTrackerApi
 ```
-
-Restore dependencies:
-
-```bash
-dotnet restore
-```
-
-Apply database migrations:
-
-```bash
 dotnet ef database update
 ```
 
-Run the API:
-
-```bash
-dotnet run
-```
-
 ---
 
-# Swagger Documentation
+## Swagger Build Issue
 
-Swagger is enabled for testing and documenting API endpoints.
+Problem:
 
-Open:
+Missing Swagger package methods.
 
+Solution:
+
+Added Swagger dependency and configured:
+
+```csharp
+builder.Services.AddSwaggerGen();
+
+app.UseSwagger();
+
+app.UseSwaggerUI();
 ```
-http://localhost:5006/swagger
-```
-
-Swagger allows testing:
-
-* GET requests
-* POST requests
-* PUT requests
-* DELETE requests
-
-without using external tools.
 
 ---
 
 # Learning Outcomes
 
-Through this task, I practiced:
+After completing this task, I learned:
 
-* Creating ASP.NET Core Web APIs
-* Working with Controllers
-* Dependency Injection
-* Entity Framework Core
-* Database migrations
-* SQL Server integration
-* DTO design pattern
-* Validation
-* REST API principles
+* How to create ASP.NET Core Web APIs
+* How dependency injection works
+* How controllers handle HTTP requests
+* How EF Core communicates with databases
+* How migrations manage database changes
+* How DTOs improve API design
+* How to build clean CRUD operations
+* How to test APIs using Swagger
+* How to manage project changes using Git
 
 ---
 
 # Future Improvements
 
-Possible future enhancements:
+Possible improvements:
 
-* Add authentication and authorization
-* Add pagination
+* Add authentication using JWT
+* Add service layer
+* Add repository pattern
 * Add global exception handling
-* Add repository/service layers
-* Add automated testing
-* Add logging
+* Add automated unit testing
+* Add pagination and filtering
+* Add logging system
+
+---
+
+# Conclusion
+
+Task Tracker API provided practical experience in backend API development using modern .NET technologies.
+
+The project combines ASP.NET Core, Entity Framework Core, SQL Server, and REST principles to create a structured and maintainable backend application.
