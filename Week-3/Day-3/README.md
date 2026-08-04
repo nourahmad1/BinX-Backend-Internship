@@ -557,19 +557,6 @@ After completing this task, I learned:
 
 ---
 
-# Future Improvements
-
-Possible improvements:
-
-* Add authentication using JWT
-* Add service layer
-* Add repository pattern
-* Add global exception handling
-* Add automated unit testing
-* Add pagination and filtering
-* Add logging system
-
----
 
 # Conclusion
 
