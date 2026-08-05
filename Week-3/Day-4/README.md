@@ -290,26 +290,26 @@ Testing covered:
 * Validation errors
 * HTTP status verification
 
-| ID     | Method | Endpoint                    | Result |
-| ------ | ------ | --------------------------- | ------ |
-| TC-001 | GET    | `/api/users`                | 200 OK |
-| TC-002 | GET    | `/api/users/1`              | 200 OK |
-| TC-003 | GET    | `/api/users/9999`           | 404    |
-| TC-004 | POST   | `/api/users`                | 201    |
-| TC-005 | POST   | `/api/users` Invalid        | 400    |
-| TC-006 | PUT    | `/api/users/1`              | 204    |
-| TC-007 | PUT    | `/api/users/9999`           | 404    |
-| TC-008 | DELETE | `/api/users/1`              | 204    |
-| TC-009 | GET    | `/api/tasks`                | 200    |
-| TC-010 | GET    | `/api/tasks/1`              | 200    |
-| TC-011 | GET    | `/api/tasks/9999`           | 404    |
-| TC-012 | POST   | `/api/tasks`                | 201    |
-| TC-013 | POST   | `/api/tasks` Invalid UserId | 400    |
-| TC-014 | PUT    | `/api/tasks/1`              | 204    |
-| TC-015 | PUT    | `/api/tasks/9999`           | 404    |
-| TC-016 | DELETE | `/api/tasks/1`              | 204    |
-| TC-017 | DELETE | `/api/tasks/9999`           | 404    |
-| TC-018 | GET    | `/api/users/1/tasks`        | 200    |
+| ID     | Method | Endpoint                    | Result ||       Screenshout       |
+| ------ | ------ | --------------------------- | ------ || ---------------------   |
+| TC-001 | GET    | `/api/users`                | 200 OK ||![alt text](image.png)   |
+| TC-002 | GET    | `/api/users/1`              | 200 OK ||![alt text](image-1.png) |
+| TC-003 | GET    | `/api/users/99`             | 404    ||![alt text](image-2.png) |
+| TC-004 | POST   | `/api/users`                | 201    ||![alt text](image-3.png) |
+| TC-005 | POST   | `/api/users` Invalid        | 400    ||![alt text](image-4.png) |
+| TC-006 | PUT    | `/api/users/1`              | 204    ||![alt text](image-5.png) |
+| TC-007 | PUT    | `/api/users/222`            | 404    ||![alt text](image-6.png) |
+| TC-008 | DELETE | `/api/users/4`              | 204    ||![alt text](image-7.png) |
+| TC-009 | DELETE | `/api/users/5555` Invalid   | 404    ||![alt text](image-8.png) |
+| TC-010 | GET    | `/api/tasks`                | 200    ||![alt text](image-9.png) |
+| TC-011 | GET    | `/api/tasks/2`              | 200    ||![alt text](image-10.png)|
+| TC-012 | GET    | `/api/tasks/99` Invalid     | 404    ||![alt text](image-11.png)|
+| TC-013 | POST   | `/api/tasks`                | 201    ||![alt text](image-12.png)|
+| TC-014 | POST   | `/api/tasks` Invalid UserId | 400    ||![alt text](image-14.png)|
+| TC-015 | PUT    | `/api/tasks/2`              | 204    ||![alt text](image-15.png)|
+| TC-016 | PUT    | `/api/tasks/9999`           | 404    ||![alt text](image-16.png)|
+| TC-017 | DELETE | `/api/tasks/1`              | 204    ||![alt text](image-17.png)|
+| TC-018 | DELETE | `/api/tasks/9999`           | 404    ||![alt text](image-18.png)|
 
 ---
 
@@ -321,10 +321,10 @@ Swagger was used for:
 * Sending test requests
 * Checking request/response models
 
-Screenshot location:
+SwaggerScreenshot:
 
 ```
-screenshots/swagger/swagger-ui.png
+![alt text](image-19.png)
 ```
 
 ---
