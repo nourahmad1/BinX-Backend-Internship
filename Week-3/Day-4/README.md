@@ -375,5 +375,3 @@ After completing this project:
 Task Tracker API demonstrates professional backend development using ASP.NET Core, Entity Framework Core, SQL Server, REST principles, and API testing tools.
 
 
-* 2NF
-* 3NF
