@@ -290,28 +290,26 @@ Testing covered:
 - Validation errors
 - Correct HTTP status codes
 
-| ID | Method | Endpoint | Expected Result | Screenshot |
+| Test ID | Method | Endpoint | Expected Result | Screenshot |
 |---|---|---|---|---|
-| TC-001 | GET | `/api/users` | 200 OK | ![TC-001](images/image.png) |
-| TC-002 | GET | `/api/users/1` | 200 OK | ![TC-002](images/image-1.png) |
-| TC-003 | GET | `/api/users/99` | 404 Not Found | ![TC-003](images/image-2.png) |
-| TC-004 | POST | `/api/users` | 201 Created | ![TC-004](images/image-3.png) |
-| TC-005 | POST | `/api/users` Invalid Data | 400 Bad Request | ![TC-005](images/image-4.png) |
-| TC-006 | PUT | `/api/users/1` | 204 No Content | ![TC-006](images/image-5.png) |
-| TC-007 | PUT | `/api/users/222` | 404 Not Found | ![TC-007](images/image-6.png) |
-| TC-008 | DELETE | `/api/users/4` | 204 No Content | ![TC-008](images/image-7.png) |
-| TC-009 | DELETE | `/api/users/5555` | 404 Not Found | ![TC-009](images/image-8.png) |
-| TC-010 | GET | `/api/tasks` | 200 OK | ![TC-010](images/image-9.png) |
-| TC-011 | GET | `/api/tasks/2` | 200 OK | ![TC-011](images/image-10.png) |
-| TC-012 | GET | `/api/tasks/99` | 404 Not Found | ![TC-012](images/image-11.png) |
-| TC-013 | POST | `/api/tasks` | 201 Created | ![TC-013](images/image-12.png) |
-| TC-014 | POST | `/api/tasks` Invalid UserId | 400 Bad Request | ![TC-014](images/image-14.png) |
-| TC-015 | PUT | `/api/tasks/2` | 204 No Content | ![TC-015](images/image-15.png) |
-| TC-016 | PUT | `/api/tasks/9999` | 404 Not Found | ![TC-016](images/image-16.png) |
-| TC-017 | DELETE | `/api/tasks/1` | 204 No Content | ![TC-017](images/image-17.png) |
-| TC-018 | DELETE | `/api/tasks/9999` | 404 Not Found | ![TC-018](images/image-18.png) |
-         
-
+| TC-001 | GET | `/api/users` | 200 OK | <img src="images/image.png" width="300"> |
+| TC-002 | GET | `/api/users/1` | 200 OK | <img src="images/image-1.png" width="300"> |
+| TC-003 | GET | `/api/users/99` | 404 Not Found | <img src="images/image-2.png" width="300"> |
+| TC-004 | POST | `/api/users` | 201 Created | <img src="images/image-3.png" width="300"> |
+| TC-005 | POST | `/api/users` (Invalid Data) | 400 Bad Request | <img src="images/image-4.png" width="300"> |
+| TC-006 | PUT | `/api/users/1` | 204 No Content | <img src="images/image-5.png" width="300"> |
+| TC-007 | PUT | `/api/users/222` | 404 Not Found | <img src="images/image-6.png" width="300"> |
+| TC-008 | DELETE | `/api/users/4` | 204 No Content | <img src="images/image-7.png" width="300"> |
+| TC-009 | DELETE | `/api/users/5555` | 404 Not Found | <img src="images/image-8.png" width="300"> |
+| TC-010 | GET | `/api/tasks` | 200 OK | <img src="images/image-9.png" width="300"> |
+| TC-011 | GET | `/api/tasks/2` | 200 OK | <img src="images/image-10.png" width="300"> |
+| TC-012 | GET | `/api/tasks/99` | 404 Not Found | <img src="images/image-11.png" width="300"> |
+| TC-013 | POST | `/api/tasks` | 201 Created | <img src="images/image-12.png" width="300"> |
+| TC-014 | POST | `/api/tasks` (Invalid UserId) | 400 Bad Request | <img src="images/image-14.png" width="300"> |
+| TC-015 | PUT | `/api/tasks/2` | 204 No Content | <img src="images/image-15.png" width="300"> |
+| TC-016 | PUT | `/api/tasks/9999` | 404 Not Found | <img src="images/image-16.png" width="300"> |
+| TC-017 | DELETE | `/api/tasks/1` | 204 No Content | <img src="images/image-17.png" width="300"> |
+| TC-018 | DELETE | `/api/tasks/9999` | 404 Not Found | <img src="images/image-18.png" width="300"> |
 ---
 
 # Swagger Documentation
