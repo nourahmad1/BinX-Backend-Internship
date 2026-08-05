@@ -284,32 +284,33 @@ All API endpoints were tested using Postman.
 
 Testing covered:
 
-* Successful requests
-* Invalid data
-* Missing resources
-* Validation errors
-* HTTP status verification
+- Successful requests
+- Invalid requests
+- Missing resources
+- Validation errors
+- Correct HTTP status codes
 
-| ID     | Method | Endpoint                    | Result ||       Screenshout       |
-| ------ | ------ | --------------------------- | ------ || ---------------------   |
-| TC-001 | GET    | `/api/users`                | 200 OK ||![alt text](image.png)   |
-| TC-002 | GET    | `/api/users/1`              | 200 OK ||![alt text](image-1.png) |
-| TC-003 | GET    | `/api/users/99`             | 404    ||![alt text](image-2.png) |
-| TC-004 | POST   | `/api/users`                | 201    ||![alt text](image-3.png) |
-| TC-005 | POST   | `/api/users` Invalid        | 400    ||![alt text](image-4.png) |
-| TC-006 | PUT    | `/api/users/1`              | 204    ||![alt text](image-5.png) |
-| TC-007 | PUT    | `/api/users/222`            | 404    ||![alt text](image-6.png) |
-| TC-008 | DELETE | `/api/users/4`              | 204    ||![alt text](image-7.png) |
-| TC-009 | DELETE | `/api/users/5555` Invalid   | 404    ||![alt text](image-8.png) |
-| TC-010 | GET    | `/api/tasks`                | 200    ||![alt text](image-9.png) |
-| TC-011 | GET    | `/api/tasks/2`              | 200    ||![alt text](image-10.png)|
-| TC-012 | GET    | `/api/tasks/99` Invalid     | 404    ||![alt text](image-11.png)|
-| TC-013 | POST   | `/api/tasks`                | 201    ||![alt text](image-12.png)|
-| TC-014 | POST   | `/api/tasks` Invalid UserId | 400    ||![alt text](image-14.png)|
-| TC-015 | PUT    | `/api/tasks/2`              | 204    ||![alt text](image-15.png)|
-| TC-016 | PUT    | `/api/tasks/9999`           | 404    ||![alt text](image-16.png)|
-| TC-017 | DELETE | `/api/tasks/1`              | 204    ||![alt text](image-17.png)|
-| TC-018 | DELETE | `/api/tasks/9999`           | 404    ||![alt text](image-18.png)|
+| ID | Method | Endpoint | Expected Result | Screenshot |
+|---|---|---|---|---|
+| TC-001 | GET | `/api/users` | 200 OK | ![TC-001](images/image.png) |
+| TC-002 | GET | `/api/users/1` | 200 OK | ![TC-002](images/image-1.png) |
+| TC-003 | GET | `/api/users/99` | 404 Not Found | ![TC-003](images/image-2.png) |
+| TC-004 | POST | `/api/users` | 201 Created | ![TC-004](images/image-3.png) |
+| TC-005 | POST | `/api/users` Invalid Data | 400 Bad Request | ![TC-005](images/image-4.png) |
+| TC-006 | PUT | `/api/users/1` | 204 No Content | ![TC-006](images/image-5.png) |
+| TC-007 | PUT | `/api/users/222` | 404 Not Found | ![TC-007](images/image-6.png) |
+| TC-008 | DELETE | `/api/users/4` | 204 No Content | ![TC-008](images/image-7.png) |
+| TC-009 | DELETE | `/api/users/5555` | 404 Not Found | ![TC-009](images/image-8.png) |
+| TC-010 | GET | `/api/tasks` | 200 OK | ![TC-010](images/image-9.png) |
+| TC-011 | GET | `/api/tasks/2` | 200 OK | ![TC-011](images/image-10.png) |
+| TC-012 | GET | `/api/tasks/99` | 404 Not Found | ![TC-012](images/image-11.png) |
+| TC-013 | POST | `/api/tasks` | 201 Created | ![TC-013](images/image-12.png) |
+| TC-014 | POST | `/api/tasks` Invalid UserId | 400 Bad Request | ![TC-014](images/image-14.png) |
+| TC-015 | PUT | `/api/tasks/2` | 204 No Content | ![TC-015](images/image-15.png) |
+| TC-016 | PUT | `/api/tasks/9999` | 404 Not Found | ![TC-016](images/image-16.png) |
+| TC-017 | DELETE | `/api/tasks/1` | 204 No Content | ![TC-017](images/image-17.png) |
+| TC-018 | DELETE | `/api/tasks/9999` | 404 Not Found | ![TC-018](images/image-18.png) |
+         
 
 ---
 
@@ -317,15 +318,15 @@ Testing covered:
 
 Swagger was used for:
 
-* Viewing API endpoints
-* Sending test requests
-* Checking request/response models
+- Viewing API endpoints
+- Sending HTTP requests
+- Testing responses
+- Checking request and response models
 
-SwaggerScreenshot:
 
-```
-![alt text](image-19.png)
-```
+## Swagger Screenshot
+
+![Swagger API Documentation](images/image-19.png)
 
 ---
 
