@@ -19,22 +19,6 @@ The project manages users and tasks while applying professional backend developm
 
 ---
 
-# Technologies Used
-
-| Technology                     | Purpose                      |
-| ------------------------------ | ---------------------------- |
-| C#                             | Backend programming language |
-| ASP.NET Core Web API (.NET 10) | REST API development         |
-| Entity Framework Core          | ORM and database access      |
-| SQL Server LocalDB             | Database                     |
-| LINQ                           | Querying                     |
-| Swagger/OpenAPI                | Documentation                |
-| Postman                        | API testing                  |
-| Git & GitHub                   | Version control              |
-| draw.io                        | ERD diagrams                 |
-
----
-
 # Project Structure
 
 ```text
@@ -338,7 +322,6 @@ Swagger was used for:
 | Swagger              | API documentation     |
 | Postman              | Testing               |
 | GitHub               | Source control        |
-| draw.io              | Database diagrams     |
 
 ---
 
@@ -355,18 +338,6 @@ After completing this project:
 * Implemented validation
 * Tested APIs professionally
 * Documented backend work
-
----
-
-# Quality Criteria Achievement
-
-| Category         | Achievement                              |
-| ---------------- | ---------------------------------------- |
-| API Design       | RESTful routes and correct HTTP codes    |
-| Database Quality | Normalized schema and EF migrations      |
-| C#/.NET Usage    | Async EF Core and clean patterns         |
-| Code Quality     | Organized project structure              |
-| Debugging        | Solved configuration and database issues |
 
 ---
 
