@@ -10,7 +10,6 @@ This day covered:
 * Building a properly organized Postman collection
 * Testing success **and** error paths for every endpoint
 * Postman environments and variables (`{{baseUrl}}`)
-* Documenting the API for teammates and future-me
 * Producing a full testing report with evidence (linked in the GitHub repo)
 
 ---
