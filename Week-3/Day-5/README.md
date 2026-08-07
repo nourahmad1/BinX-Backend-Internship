@@ -106,8 +106,6 @@ All requests in both folders were updated to use `{{baseUrl}}`. Switching enviro
 | Environment | `baseUrl` value |
 |---|---|
 | Local | `https://localhost:{port}` |
-| Staging | *(to be added in Week 9)* |
-| Production | *(to be added in Week 9)* |
 
 ---
 
