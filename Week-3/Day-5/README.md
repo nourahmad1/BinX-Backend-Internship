@@ -162,7 +162,6 @@ The report includes:
 * [x] Added at least one error-path request per endpoint (not found, invalid input) alongside the happy path
 * [x] Added test scripts asserting the expected status code for at least 3 requests
 * [x] Created a Postman environment with a `baseUrl` variable and updated all requests to use it
-* [x] Assembled the Week 3 summary (REST design doc, ERD, exported Postman collection link) for the mentor check-in
 
 ---
 
@@ -184,8 +183,6 @@ A Postman collection that only ever tests happy paths gives a false sense of con
 
 ---
 
-# Next Steps (Week 9 Preview)
 
-* Point the `baseUrl` environment variable at a real staging/production URL once the API is deployed.
 * Expand the collection to meet the Week 9 professional baseline (minimum one test per endpoint, already satisfied here).
 * Ensure documentation passes the Week 9 Definition of Done audit.
