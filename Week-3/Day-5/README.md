@@ -54,7 +54,6 @@ Task Tracker API Version2
     └── TC-018 | Delete Task - Not Found             (DEL)
 ```
 
-> Request names follow the `TC-### | <Action> - <Scenario>` convention directly inside the collection, so each request's purpose is visible without opening it.
 
 Every request is **saved**, not just tested ad hoc, so the whole collection can be re-run or shared with a teammate. This matches the collection format required by the Week 9 professional baseline (minimum one test per endpoint), so building this habit now avoids a scramble later.
 
