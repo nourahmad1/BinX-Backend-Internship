@@ -178,7 +178,3 @@ A Postman collection that only ever tests happy paths gives a false sense of con
 | ASP.NET Core (.NET 10) | The API under test |
 
 ---
-
-
-* Expand the collection to meet the Week 9 professional baseline (minimum one test per endpoint, already satisfied here).
-* Ensure documentation passes the Week 9 Definition of Done audit.
