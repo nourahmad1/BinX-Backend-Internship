@@ -101,7 +101,7 @@ A Postman **environment** was created to store the API's base URL as a variable 
 {{baseUrl}}/api/tasks
 ```
 
-All requests in both folders were updated to use `{{baseUrl}}`. Switching environments (local → staging → production) now only requires updating one variable value, instead of editing every request URL by hand. This becomes essential once the API is deployed in Week 9 and needs to be tested against a real, live URL alongside local development.
+All requests in both folders were updated to use `{{baseUrl}}`. Switching environments (local → staging → production) now only requires updating one variable value, instead of editing every request URL by hand. This becomes essential once the API is deployed and needs to be tested against a real, live URL alongside local development.
 
 | Environment | `baseUrl` value |
 |---|---|
