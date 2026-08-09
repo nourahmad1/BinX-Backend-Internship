@@ -9,7 +9,7 @@
 ![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-`⏱ 8 hours` · `📄 Full report: Postman_API_Testing_Report.docx`
+`⏱ 8 hours` · `📄 Full report: Postman_API_Testing_Report.pdf`
 
 </div>
 
@@ -85,7 +85,7 @@ Between the two, both sides of registration are covered: a real user getting cre
 
 <div align="center">
 
-📄 **See [`Postman_API_Testing_Report.docx`](./Postman_API_Testing_Report.docx) for the full test report, including screenshots.**
+📄 **See [`Postman_API_Testing_Report.docx`](./Postman_API_Testing_Report.pdf) for the full test report, including screenshots.**
 
 *— end of Day 1*
 
