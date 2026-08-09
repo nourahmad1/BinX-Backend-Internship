@@ -19,13 +19,13 @@
 
 Authentication — specifically, *not* building it myself. ASP.NET Core Identity handles the parts of a login system that are easiest to get wrong, and today was about understanding what it gives you for free, wiring it into a real project, and proving it actually works.
 
-## 🎯 Learning objectives
+## 📌 Learning objectives
 
 - Explain what ASP.NET Core Identity provides out of the box
 - Set up Identity with Entity Framework Core
 - Implement a user registration endpoint
 
-## 🧠 What I learned
+## 📌 What I learned
 
 ### 1. It's a complete membership system, not just a users table
 Storage, password hashing, roles, account confirmation — all of it ships out of the box, sitting on top of Entity Framework Core. The real value isn't convenience, it's that this code has already been picked apart by Microsoft and the entire .NET community. Rolling your own version means reinventing something security-critical, badly, alone.
@@ -51,7 +51,7 @@ Identity hashes passwords with **PBKDF2** by default — deliberately slow, and 
 
 > **Note to self:** Don't ever write custom password hashing. Not "don't unless you have a good reason" — just don't. Identity's version has been battle-tested by a much bigger crowd than will ever review my code.
 
-## 🛠️ What I built — hands-on lab
+## 📌 What I built — hands-on lab
 
 - [x] Added the Identity NuGet packages and extended the `DbContext` to inherit from `IdentityDbContext`
 - [x] Ran a migration to add the Identity schema to the database, then applied it
@@ -61,7 +61,7 @@ Identity hashes passwords with **PBKDF2** by default — deliberately slow, and 
 
 **Tools:** ASP.NET Core Identity · Entity Framework Core · Postman
 
-## 🧪 Putting the endpoint through Postman
+## 📌 Putting the endpoint through Postman
 
 With the endpoint built, the last step was proving it actually behaves — both when everything is correct and when it isn't.
 
