@@ -85,7 +85,7 @@ Between the two, both sides of registration are covered: a real user getting cre
 
 <div align="center">
 
-📄 **See [`Postman_API_Testing_Report.docx`](./Postman_API_Testing_Report.pdf) for the full test report, including screenshots.**
+📄 **See [`Postman_API_Testing_Report.pdf`](./Postman_API_Testing_Report.pdf) for the full test report, including screenshots.**
 
 *— end of Day 1*
 
