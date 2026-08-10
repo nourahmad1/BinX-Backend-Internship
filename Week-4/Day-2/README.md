@@ -1,17 +1,8 @@
-<div align="center">
-
 # Day 2 — JWT Authentication & Token Issuance
 
 *Field notes from the day the login endpoint stopped just saying "yes" or "no" and started handing back proof.*
 
-![.NET](https://img.shields.io/badge/ASP.NET%20Core-JWT-512BD4?logo=dotnet&logoColor=white)
-![Identity](https://img.shields.io/badge/ASP.NET%20Core-Identity-512BD4?logo=dotnet&logoColor=white)
-![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
-![Status](https://img.shields.io/badge/status-complete-2ea44f)
-
 `⏱ 8 hours` · `📄 Full report: Postman_Login_JWT_Testing_Report.pdf`
-
-</div>
 
 ---
 
@@ -21,50 +12,77 @@ Yesterday Identity proved a user is who they say they are. Today that proof got 
 
 ## 📌 Learning objectives
 
-- Explain a JWT's structure and what claims represent
-- Implement a login endpoint that issues a JWT on successful authentication
-- Configure JWT bearer authentication middleware to validate incoming tokens
+* Explain a JWT's structure and what claims represent
+* Implement a login endpoint that issues a JWT on successful authentication
+* Configure JWT bearer authentication middleware to validate incoming tokens
 
 ## 📌 What I learned
 
 ### 1. A JWT is three dot-separated parts, and only one of them is secret-ish
-Header, payload, signature. The header says which algorithm signed it, the payload holds claims — statements about the user like their ID or roles — and the signature proves nothing was tampered with after issuance. The part that surprised me: the payload isn't encrypted, just signed. Anyone can paste a token into jwt.io and read it. So the claims are for *identifying* the user, never for hiding anything from them.
+
+Header, payload, signature. The header says which algorithm signed it, the payload holds claims — statements about the user like their ID or email — and the signature proves nothing was tampered with after issuance. The part that surprised me: the payload isn't encrypted, just signed. Anyone can paste a token into jwt.io and read it. So the claims are for *identifying* the user, never for hiding anything from them.
 
 ### 2. Issuing a token is just: verify, then sign
-Login still starts exactly like Identity taught it to — `SignInManager.CheckPasswordSignInAsync` checks the credentials. The new part is what happens on success: instead of returning "ok", the endpoint builds a `JwtSecurityToken` out of a few claims, signs it with a secret key, and hands it back as a string.
+
+Login still starts exactly like Identity taught it to — `SignInManager.CheckPasswordSignInAsync` checks the credentials. The new part is what happens on success: instead of returning only a successful login response, the endpoint builds a `JwtSecurityToken` from the user's claims, signs it with a secret key, and returns it as a string.
+
+Our implementation adds the user's ID as the JWT `sub` claim and the user's email as an email claim:
 
 ```csharp
 var claims = new[]
 {
     new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-    new Claim(ClaimTypes.Email, user.Email!),
+    new Claim(ClaimTypes.Email, user.Email!)
 };
-
-var token = new JwtSecurityToken(
-    issuer: config["Jwt:Issuer"],
-    claims: claims,
-    expires: DateTime.UtcNow.AddHours(1),
-    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
 ```
 
-From here on, the client attaches this token to every request instead of resending a password — the token *is* the login.
+The token is then created with the configured issuer, audience, expiration time, and signing credentials:
+
+```csharp
+var token = new JwtSecurityToken(
+    issuer: _configuration["Jwt:Issuer"],
+    audience: _configuration["Jwt:Audience"],
+    claims: claims,
+    expires: DateTime.UtcNow.AddMinutes(
+        double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
+    signingCredentials: credentials);
+```
+
+The client can then attach this access token to later requests instead of sending the user's password again.
 
 ### 3. `[Authorize]` only works because the middleware does the checking first
-Registering JWT bearer authentication in `Program.cs` tells the app what a "valid" token even means for this API: expected issuer, expected audience, the key to verify the signature against, and whether to enforce expiry. Once that's wired up, any endpoint marked `[Authorize]` never even sees a request until the token has already been validated — the controller code doesn't do any of that checking itself.
 
-### 4. Short-lived tokens are a feature, not a limitation
-A stolen token is only dangerous for as long as it's valid, so access tokens are deliberately short — 15 minutes to a few hours. Refresh tokens exist to soften that: a longer-lived, more carefully stored token used only to get a new access token without forcing the user to log in again. Full refresh-token support was flagged as a stretch task rather than something to build today, so it's parked for later, not skipped by accident.
+Registering JWT bearer authentication in `Program.cs` tells the app what a "valid" token means for this API: the expected issuer, expected audience, signing key, and whether the token is still within its lifetime.
 
-> **Note to self:** the signing key is a secret exactly like a database password — never committed in plaintext. Local dev keeps it in a gitignored `appsettings.Development.json`; production keeps it in the host's secrets manager, not the repo.
+We configured:
+
+```csharp
+ValidateIssuer = true,
+ValidateAudience = true,
+ValidateLifetime = true,
+ValidateIssuerSigningKey = true
+```
+
+Once this is wired up, an endpoint marked with `[Authorize]` can rely on the authentication middleware to validate the incoming JWT before the request is allowed through to the controller.
+
+### 4. Short-lived tokens are a security feature
+
+A stolen access token is only useful while it remains valid, so access tokens are deliberately short-lived. In this lab, we configured a **15-minute expiration** for testing.
+
+Refresh tokens can be used in a larger authentication system to obtain a new access token without requiring the user to log in again. Full refresh-token support was treated as a stretch task rather than part of today's implementation.
+
+> **Note to self:** the signing key is a secret exactly like a database password — never commit a real production secret to source control. Local development secrets should be kept outside the repository, while production secrets should be managed through the hosting environment or a proper secrets manager.
 
 ## 📌 What I built — hands-on lab
 
-- [x] Implemented `POST /api/Auth/login`, verifying credentials with `SignInManager` and returning `401` for a wrong password or a non-existent email
-- [x] On successful login, built and returned a signed JWT containing the user's ID (`sub`) and email as claims, plus issuer, audience, and a short expiry
-- [x] Configured JWT bearer authentication in `Program.cs` — issuer, audience, signing key, and lifetime validation all wired into `TokenValidationParameters`
-- [x] Protected `GET /api/Tasks` with `[Authorize]` and confirmed it rejects requests with no token
-- [x] Decoded the issued token at jwt.io and confirmed `sub`, `email`, `iss`, `aud`, and `exp` all matched what the code set
-- [x] Set a 15-minute expiry and confirmed an expired token is rejected by the protected endpoint
+* [x] Implemented `POST /api/Auth/login`, verifying credentials with `SignInManager` and returning `401 Unauthorized` for a wrong password or a non-existent email
+* [x] On successful login, built and returned a signed JWT containing the user's ID (`sub`) and email claim, plus issuer, audience, and a 15-minute expiry
+* [x] Configured JWT bearer authentication in `Program.cs` — issuer, audience, signing key, and lifetime validation are all wired into `TokenValidationParameters`
+* [x] Protected `GET /api/Tasks` with `[Authorize]` and confirmed it rejects requests with no token
+* [x] Sent the valid JWT through Postman's `Authorization → Bearer Token` option and confirmed the protected endpoint accepts it
+* [x] Decoded the issued token at jwt.io and confirmed `sub`, email, `iss`, `aud`, and `exp` matched the values generated by the application
+* [x] Converted the `exp` Unix timestamp with PowerShell and confirmed the token's expiration time
+* [x] Confirmed that an expired JWT is rejected by the protected endpoint with `401 Unauthorized`
 
 **Tools:** ASP.NET Core Identity · System.IdentityModel.Tokens.Jwt · Postman · jwt.io · PowerShell
 
@@ -72,18 +90,53 @@ A stolen token is only dangerous for as long as it's valid, so access tokens are
 
 Yesterday's tests proved a user could be created. Today's had to prove something more layered — that login hands out a real token, that a bad login never gets one, and that the token is actually being checked, not just politely ignored.
 
-| Test | Request | Result | What happened |
-|---|---|---|---|
-| **Login – Valid Credentials** | `POST /api/Auth/login` | ✅ `200 OK` | Correct email and password. `SignInManager` confirmed the credentials and a signed JWT came back with `sub`, `email`, `iss`, `aud`, and `exp` claims. |
-| **Login – Wrong Password** | `POST /api/Auth/login` | ❌ `401 Unauthorized` | Right email, wrong password. Same generic "Invalid email or password" message as a non-existent email — no hint about which part was wrong. |
-| **Login – Non-Existing Email** | `POST /api/Auth/login` | ❌ `401 Unauthorized` | An email that isn't registered at all. Identical response to the wrong-password case, so the API never leaks whether an account exists. |
-| **Get Tasks – No Auth** | `GET /api/Tasks` | ❌ `401 Unauthorized` | No Bearer token attached. `[Authorize]` never let the request reach the controller. |
-| **Get Tasks – Valid JWT** | `GET /api/Tasks` | ✅ `200 OK` | The token from the valid login, sent as a Bearer token. Signature, issuer, audience, and expiry all checked out, and the task list came back. |
-| **Get Tasks – Expired JWT** | `GET /api/Tasks` | ❌ `401 Unauthorized` | An older token past its `exp` timestamp. Everything else about it was still valid — only the expiry check failed, and that was enough to block it. |
+| Test                           | Request                | Result               | What happened                                                                                                                                                                            |
+| ------------------------------ | ---------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Login – Valid Credentials**  | `POST /api/Auth/login` | ✅ `200 OK`           | Correct email and password. `SignInManager` confirmed the credentials and a signed JWT came back with `sub`, email, `iss`, `aud`, and `exp` claims.                                      |
+| **Login – Wrong Password**     | `POST /api/Auth/login` | ❌ `401 Unauthorized` | Right email, wrong password. The API returned the same generic "Invalid email or password" message used for a non-existent email.                                                        |
+| **Login – Non-Existing Email** | `POST /api/Auth/login` | ❌ `401 Unauthorized` | An email that isn't registered at all. The API returned the same generic authentication error, so it does not reveal whether an account exists.                                          |
+| **Get Tasks – No Auth**        | `GET /api/Tasks`       | ❌ `401 Unauthorized` | No Bearer token was attached. `[Authorize]` prevented the unauthenticated request from reaching the controller.                                                                          |
+| **Get Tasks – Valid JWT**      | `GET /api/Tasks`       | ✅ `200 OK`           | The JWT from the successful login was sent using Postman's `Authorization → Bearer Token`. The token passed authentication validation and the protected endpoint returned the task list. |
+| **Get Tasks – Expired JWT**    | `GET /api/Tasks`       | ❌ `401 Unauthorized` | An expired JWT was sent as a Bearer token. Because lifetime validation was enabled, the API rejected the request.                                                                        |
 
-Both flows live in one Postman collection:
+### JWT inspection
 
+The successful login token was decoded using jwt.io to verify the generated claims.
+
+The token contained information equivalent to:
+
+```json
+{
+  "sub": "6ee135d1-4ac7-4783-94c4-a65766715654",
+  "email": "testuser1@example.com",
+  "exp": 1786364316,
+  "iss": "TaskTrackerApi",
+  "aud": "TaskTrackerClient"
+}
 ```
+
+The `sub` claim identifies the authenticated user, the email claim contains the user's email, `iss` identifies the application that issued the token, `aud` identifies the intended audience, and `exp` specifies when the token stops being valid.
+
+We then converted the `exp` value using PowerShell:
+
+```powershell
+[DateTimeOffset]::FromUnixTimeSeconds(1786364316).ToLocalTime()
+```
+
+The result was:
+
+```text
+DateTime : 8/10/2026 3:18:36 PM
+Offset   : 03:00:00
+```
+
+This confirmed the exact expiration time represented by the JWT's Unix timestamp.
+
+## 📌 Postman collection
+
+Both authentication and authorization tests were organized in the same Postman collection:
+
+```text
 Task Tracker API v2
 ├── Authentication
     ├── Login - Valid Credentials
@@ -94,14 +147,10 @@ Task Tracker API v2
     └── Get Tasks - Expired JWT
 ```
 
-Between the six, both halves of the story are covered: a real login producing a token that actually works, and every way a request can fail to prove itself — wrong password, unknown email, missing token, expired token — getting caught before it touches anything protected.
+The collection covers both sides of the authentication flow: a successful login producing a token that can actually be used, and the different ways authentication can fail — wrong credentials, unknown email, missing token, and expired token.
 
 ---
 
-<div align="center">
-
-📄 **See [`Postman_Login_JWT_Testing_Report.pdf`](./Postman_Login_JWT_Testing_Report.pdf) for the full test report, including screenshots.**
+📄 **See** **[`Postman_Login_JWT_Testing_Report.pdf`](./Postman_Login_JWT_Testing_Report.pdf)** **for the full test report, including screenshots.**
 
 *— end of Day 2*
-
-</div>
