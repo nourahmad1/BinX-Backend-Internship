@@ -9,7 +9,7 @@
 ![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-`⏱ 8 hours` · `📄 Full report: Postman_Login_JWT_Testing_Report.docx`
+`⏱ 8 hours` · `📄 Full report: Postman_Login_JWT_Testing_Report.pdf`
 
 </div>
 
@@ -100,7 +100,7 @@ Between the six, both halves of the story are covered: a real login producing a 
 
 <div align="center">
 
-📄 **See [`Postman_Login_JWT_Testing_Report.docx`](./Postman_Login_JWT_Testing_Report.docx) for the full test report, including screenshots.**
+📄 **See [`Postman_Login_JWT_Testing_Report.pdf`](./Postman_Login_JWT_Testing_Report.pdf) for the full test report, including screenshots.**
 
 *— end of Day 2*
 
