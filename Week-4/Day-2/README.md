@@ -84,7 +84,7 @@ Yesterday's tests proved a user could be created. Today's had to prove something
 Both flows live in one Postman collection:
 
 ```
-Task Tracker API - Week 4 Day 2
+Task Tracker API v2
 ├── Authentication
     ├── Login - Valid Credentials
     ├── Login - Wrong Password
