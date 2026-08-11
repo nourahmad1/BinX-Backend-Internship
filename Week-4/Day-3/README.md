@@ -10,7 +10,7 @@
 ![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-`⏱ 8 hours` · `📄 Full report: Day3_Authorization_API_Testing_Report.docx`
+`⏱ 8 hours` · `📄 Full report: Day3_Authorization_API_Testing_Report.pdf`
 
 </div>
 
@@ -119,7 +119,8 @@ Day 2's tests proved a token could be issued and checked. Today's had to prove s
 
 <div align="center">
 
-📄 **See [`Day3_Authorization_API_Testing_Report.docx`](./Day3_Authorization_API_Testing_Report.docx) for the full test report.**
+📄 **See [`Day3_Authorization_API_Testing_Report.pdf`](./Day3_Authorization_API_Testing_Report.pdf
+) for the full test report.**
 
 *— end of Day 3*
 
