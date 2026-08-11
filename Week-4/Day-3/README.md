@@ -1,380 +1,126 @@
-# Task Tracker API — Project Overview
+<div align="center">
 
-## Overview
+# Day 3 — Protecting Routes with Authorization & Role-Based Access Control
 
-Task Tracker API is a RESTful Web API built using **ASP.NET Core (.NET 10)**.
+*Field notes from the day the API stopped trusting anyone who merely showed up with a valid token, and started asking what they were actually allowed to do.*
 
-The project manages users and tasks while applying professional backend development practices:
+![.NET](https://img.shields.io/badge/ASP.NET%20Core-Authorization-512BD4?logo=dotnet&logoColor=white)
+![Identity](https://img.shields.io/badge/ASP.NET%20Core-Identity-512BD4?logo=dotnet&logoColor=white)
+![RBAC](https://img.shields.io/badge/Access%20Control-Role%20Based-blue)
+![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
+![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-* REST API design
-* CRUD operations
-* Entity Framework Core
-* SQL Server integration
-* EF Core migrations
-* Async database operations
-* DTO pattern
-* Validation
-* Swagger documentation
-* Postman testing
+`⏱ 8 hours` · `📄 Full report: Day3_Authorization_API_Testing_Report.docx`
+
+</div>
 
 ---
 
-# Technologies Used
+## 📌 Today in one sentence
 
-| Technology                     | Purpose                      |
-| ------------------------------ | ---------------------------- |
-| C#                             | Backend programming language |
-| ASP.NET Core Web API (.NET 10) | REST API development         |
-| Entity Framework Core          | ORM and database access      |
-| SQL Server LocalDB             | Database                     |
-| LINQ                           | Querying                     |
-| Swagger/OpenAPI                | Documentation                |
-| Postman                        | API testing                  |
-| Git & GitHub                   | Version control              |
-| draw.io                        | ERD diagrams                 |
+Yesterday a valid JWT was enough to get in the door. Today the API learned that being *authenticated* and being *allowed* are two different questions — `[Authorize]` locked the door, roles decided who gets which room, and a first named policy hinted at a future where permissions, not job titles, do the deciding.
 
----
+## 📌 Learning objectives
 
-# Project Structure
+- Apply `[Authorize]` to protect endpoints from unauthenticated access
+- Implement role-based access control with at least two roles
+- Understand claims-based and policy-based authorization for finer-grained control
 
-```text
-TaskTrackerApi
+## 📌 What I learned
 
-├── Controllers
-│   ├── UsersController.cs
-│   └── TasksController.cs
-│
-├── Data
-│   └── AppDbContext.cs
-│
-├── DTOs
-│
-├── Entities
-│
-├── Migrations
-│
-├── Program.cs
-└── appsettings.json
-```
+### 1. `[Authorize]` doesn't check anything itself — it just refuses to let unchecked requests through
+Dropping `[Authorize]` on `TasksController` means no token, an expired token, or a bad signature never even reaches the action body — the middleware set up on Day 2 rejects it with `401 Unauthorized` first. `[AllowAnonymous]` is the escape hatch: it lets one action (a health check, say) opt back out of an otherwise-locked-down controller.
 
----
+### 2. Roles are seeded, not requested
+`User` and `Admin` exist as Identity roles created via `RoleManager<IdentityRole>` at startup, and the Admin account itself is seeded through `UserManager<User>` with credentials pulled from configuration — not from public registration. The part that surprised me: there's no "become admin" button anywhere, by design. If self-registration could ever produce an Admin, the role would be worthless as a security boundary.
 
-# Architecture
-
-## Entities
-
-Database models:
-
-* User
-* TaskItem
-
-## DTOs
-
-Used classes:
-
-* UserDto
-* UserCreateDto
-* TaskDto
-* TaskCreateDto
-* TaskUpdateDto
-
-Benefits:
-
-* Prevent exposing database entities
-* Control API input
-* Add validation
-
-## Controllers
-
-Implemented controllers:
-
-* UsersController
-* TasksController
-
-Responsibilities:
-
-* Receive HTTP requests
-* Validate input
-* Access database
-* Return correct responses
-
----
-
-# Database Design
-
-Entities:
-
-```
-Users
-Tasks
-```
-
-Relationship:
-
-```
-Users 1 -------- * Tasks
-```
-
-Foreign Key:
-
-```
-Tasks.UserId → Users.Id
-```
-
-The schema follows:
-
-* 1NF
-* 2NF
-* 3NF
-# Task Tracker API — Entity Framework Core & CRUD
-
-## Entity Framework Core
-
-EF Core is used for:
-
-* Database communication
-* LINQ queries
-* Entity tracking
-* Saving changes
-* Migration management
-
-Example:
-
+### 3. Restricting an endpoint to a role is one attribute — but it changes the status code, not just the outcome
 ```csharp
-public DbSet<User> Users => Set<User>();
-
-public DbSet<TaskItem> Tasks => Set<TaskItem>();
+[Authorize(Roles = "Admin")]
+[HttpDelete("{id}")]
+public async Task<IActionResult> Delete(int id) { ... }
 ```
+A User-role token hitting this doesn't get `401` — it gets `403 Forbidden`. That distinction is the whole point of today: `401` means "I don't know who you are," `403` means "I know exactly who you are, and the answer is no."
 
----
-
-# Migrations
-
-Install EF Core CLI:
-
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-Create migration:
-
-```bash
-dotnet ef migrations add InitialCreate
-```
-
-Apply migration:
-
-```bash
-dotnet ef database update
-```
-
-Check migrations:
-
-```bash
-dotnet ef migrations list
-```
-
----
-
-# CRUD Endpoints
-
-## Users
-
-| Method | Endpoint          | Description    |
-| ------ | ----------------- | -------------- |
-| GET    | `/api/users`      | Get all users  |
-| GET    | `/api/users/{id}` | Get user by ID |
-| POST   | `/api/users`      | Create user    |
-| PUT    | `/api/users/{id}` | Update user    |
-| DELETE | `/api/users/{id}` | Delete user    |
-
-## Tasks
-
-| Method | Endpoint          | Description    |
-| ------ | ----------------- | -------------- |
-| GET    | `/api/tasks`      | Get all tasks  |
-| GET    | `/api/tasks/{id}` | Get task by ID |
-| POST   | `/api/tasks`      | Create task    |
-| PUT    | `/api/tasks/{id}` | Update task    |
-| DELETE | `/api/tasks/{id}` | Delete task    |
-
-Nested resource:
-
-```
-GET /api/users/{id}/tasks
-```
-
----
-
-# Async EF Core
-
-Implemented:
-
+### 4. Policy-based authorization: the first step away from hardcoding role names everywhere
+Instead of scattering `[Authorize(Roles = "Admin")]` across every controller that needs it, a named policy centralizes the rule:
 ```csharp
-ToListAsync()
-
-FirstOrDefaultAsync()
-
-AnyAsync()
-
-SaveChangesAsync()
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanManageTasks", policy =>
+    {
+        policy.RequireClaim("Permission", "CanManageTasks");
+    });
+});
 ```
+It isn't wired end-to-end yet — the `Permission` claim still needs to be attached to issued JWTs before `[Authorize(Policy = "CanManageTasks")]` means anything on an endpoint. But the shape of it is already more flexible than roles: a policy can check *any* claim, not just role membership.
 
-Benefits:
-
-* Non-blocking requests
-* Better scalability
-* Better performance
-
----
-
-# Change Tracking
-
-EF Core tracks loaded entities.
-
-Example:
-
+### 5. Middleware order is not a formality
 ```csharp
-var task = await _context.Tasks.FindAsync(id);
-
-task.Title = dto.Title;
-
-await _context.SaveChangesAsync();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 ```
+Authentication has to answer "who is this?" before authorization can answer "what can they do?" Get the order wrong and a protected endpoint stops failing cleanly — a missing token starts blowing up as a `500` instead of politely returning `401`, which is usually the first sign this line got moved.
 
-EF Core detects changes and generates optimized SQL updates.
+> **Note to self:** `401` and `403` aren't interchangeable "no" responses — they're different failures at different stages, and mixing them up in a real API leaks information about *why* someone was denied, which is exactly the kind of detail you don't want to leak by accident.
 
----
+## 📌 401 vs 403 — the core distinction
 
-# Validation
-
-Implemented using Data Annotations:
-
-```csharp
-[Required]
-
-[MaxLength(200)]
-
-[EmailAddress]
-```
-
-Invalid input returns:
+| Status | Meaning |
+|---|---|
+| **401 Unauthorized** | The request has no valid authentication (no/invalid/expired JWT). |
+| **403 Forbidden** | The caller is authenticated but lacks the required role/permission. |
 
 ```
-400 Bad Request
+No JWT → Authentication fails → 401
+
+Valid User JWT → Authenticated → Admin role required → not Admin → 403
+
+Valid Admin JWT → Authenticated → Admin role present → 204 (or 200)
 ```
 
----
+## 📌 What I built — hands-on lab
 
-# HTTP Status Codes
+- [x] Added `[Authorize]` to the Week 3 CRUD controller; confirmed no-token requests return `401`
+- [x] Created `User` and `Admin` roles; assigned them to two test users via `UserManager`
+- [x] Restricted the Delete endpoint to `Admin` only; confirmed a User-role token gets `403`
+- [x] Defined one named authorization policy beyond a simple role check; applied it to one endpoint
+- [x] Set up a Postman environment that captures the login token and reuses it for protected requests
 
-| Code | Meaning            |
-| ---- | ------------------ |
-| 200  | Successful request |
-| 201  | Resource created   |
-| 204  | No Content         |
-| 400  | Bad Request        |
-| 404  | Not Found          |
+**Tools:** ASP.NET Core · ASP.NET Core Identity (`RoleManager`, `UserManager`) · JWT Bearer Authentication · Role-Based & Policy-Based Authorization · Entity Framework Core · SQL Server / LocalDB · Postman · Swagger
 
-# Task Tracker API — Testing & Documentation
+## 📌 Putting the endpoints through Postman
 
-# Postman Testing
+Day 2's tests proved a token could be issued and checked. Today's had to prove something more layered — that a valid token isn't automatically a valid *permission*, and that the API tells the difference between "I don't know you" and "I know you, and no."
 
-All API endpoints were tested using Postman.
+| TC | Test Case | Endpoint | Auth | Expected |
+|---|---|---|---|---|
+| TC01 | Protected route without token | `GET /api/Tasks` | No Token | 401 |
+| TC02 | Protected route with invalid token | `GET /api/Tasks` | Invalid JWT | 401 |
+| TC03 | Protected route with User token | `GET /api/Tasks` | User JWT | 200 |
+| TC04 | Protected route with Admin token | `GET /api/Tasks` | Admin JWT | 200 |
+| TC05 | Admin endpoint without token | `DELETE /api/Users/{id}` | No Token | 401 |
+| TC06 | Admin endpoint with User token | `DELETE /api/Users/{id}` | User JWT | 403 |
+| TC07 | Admin endpoint with Admin token | `DELETE /api/Users/{id}` | Admin JWT | 204 |
+| TC08 | Policy endpoint without token | Policy endpoint | No Token | 401 |
+| TC09 | Policy endpoint with User token | Policy endpoint | User JWT | 403 |
+| TC10 | Policy endpoint with authorized Admin | Policy endpoint | Admin JWT + Permission | Success |
 
-Testing covered:
+**10/10 passed.** Every combination of "who are you" and "what are you allowed to do" landed on the status code it should have — nothing leaked through on a technicality, and nothing correctly-permitted got blocked by accident.
 
-* Successful requests
-* Invalid data
-* Missing resources
-* Validation errors
-* HTTP status verification
+## 📌 Next steps
 
-| ID     | Method | Endpoint                    | Result ||       Screenshout       |
-| ------ | ------ | --------------------------- | ------ || ---------------------   |
-| TC-001 | GET    | `/api/users`                | 200 OK ||![alt text](image.png)   |
-| TC-002 | GET    | `/api/users/1`              | 200 OK ||![alt text](image-1.png) |
-| TC-003 | GET    | `/api/users/99`             | 404    ||![alt text](image-2.png) |
-| TC-004 | POST   | `/api/users`                | 201    ||![alt text](image-3.png) |
-| TC-005 | POST   | `/api/users` Invalid        | 400    ||![alt text](image-4.png) |
-| TC-006 | PUT    | `/api/users/1`              | 204    ||![alt text](image-5.png) |
-| TC-007 | PUT    | `/api/users/222`            | 404    ||![alt text](image-6.png) |
-| TC-008 | DELETE | `/api/users/4`              | 204    ||![alt text](image-7.png) |
-| TC-009 | DELETE | `/api/users/5555` Invalid   | 404    ||![alt text](image-8.png) |
-| TC-010 | GET    | `/api/tasks`                | 200    ||![alt text](image-9.png) |
-| TC-011 | GET    | `/api/tasks/2`              | 200    ||![alt text](image-10.png)|
-| TC-012 | GET    | `/api/tasks/99` Invalid     | 404    ||![alt text](image-11.png)|
-| TC-013 | POST   | `/api/tasks`                | 201    ||![alt text](image-12.png)|
-| TC-014 | POST   | `/api/tasks` Invalid UserId | 400    ||![alt text](image-14.png)|
-| TC-015 | PUT    | `/api/tasks/2`              | 204    ||![alt text](image-15.png)|
-| TC-016 | PUT    | `/api/tasks/9999`           | 404    ||![alt text](image-16.png)|
-| TC-017 | DELETE | `/api/tasks/1`              | 204    ||![alt text](image-17.png)|
-| TC-018 | DELETE | `/api/tasks/9999`           | 404    ||![alt text](image-18.png)|
+- Attach the `Permission` claim to issued JWTs so the `CanManageTasks` policy can be exercised end-to-end
+- Add further granular policies (e.g. per-tenant, per-resource-owner checks)
+- Expand Postman coverage as more policy-protected endpoints are added
 
 ---
 
-# Swagger Documentation
+<div align="center">
 
-Swagger was used for:
+📄 **See [`Day3_Authorization_API_Testing_Report.docx`](./Day3_Authorization_API_Testing_Report.docx) for the full test report.**
 
-* Viewing API endpoints
-* Sending test requests
-* Checking request/response models
+*— end of Day 3*
 
-SwaggerScreenshot:
-
-```
-![alt text](image-19.png)
-```
-
----
-
-# Tools Used
-
-| Tool                 | Purpose               |
-| -------------------- | --------------------- |
-| .NET CLI             | Build and run project |
-| Entity Framework CLI | Database migrations   |
-| SQL Server LocalDB   | Database              |
-| Swagger              | API documentation     |
-| Postman              | Testing               |
-| GitHub               | Source control        |
-| draw.io              | Database diagrams     |
-
----
-
-# Learning Outcomes
-
-After completing this project:
-
-* Built RESTful APIs using ASP.NET Core
-* Implemented CRUD operations
-* Connected SQL Server with EF Core
-* Created migrations
-* Used DTO architecture
-* Applied async programming
-* Implemented validation
-* Tested APIs professionally
-* Documented backend work
-
----
-
-# Quality Criteria Achievement
-
-| Category         | Achievement                              |
-| ---------------- | ---------------------------------------- |
-| API Design       | RESTful routes and correct HTTP codes    |
-| Database Quality | Normalized schema and EF migrations      |
-| C#/.NET Usage    | Async EF Core and clean patterns         |
-| Code Quality     | Organized project structure              |
-| Debugging        | Solved configuration and database issues |
-
----
-
-# Conclusion
-
-Task Tracker API demonstrates professional backend development using ASP.NET Core, Entity Framework Core, SQL Server, REST principles, and API testing tools.
-
-
-* 2NF
-* 3NF
+</div>
