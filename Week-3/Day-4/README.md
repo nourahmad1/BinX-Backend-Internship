@@ -19,22 +19,6 @@ The project manages users and tasks while applying professional backend developm
 
 ---
 
-# Technologies Used
-
-| Technology                     | Purpose                      |
-| ------------------------------ | ---------------------------- |
-| C#                             | Backend programming language |
-| ASP.NET Core Web API (.NET 10) | REST API development         |
-| Entity Framework Core          | ORM and database access      |
-| SQL Server LocalDB             | Database                     |
-| LINQ                           | Querying                     |
-| Swagger/OpenAPI                | Documentation                |
-| Postman                        | API testing                  |
-| Git & GitHub                   | Version control              |
-| draw.io                        | ERD diagrams                 |
-
----
-
 # Project Structure
 
 ```text
@@ -284,48 +268,47 @@ All API endpoints were tested using Postman.
 
 Testing covered:
 
-* Successful requests
-* Invalid data
-* Missing resources
-* Validation errors
-* HTTP status verification
+- Successful requests
+- Invalid requests
+- Missing resources
+- Validation errors
+- Correct HTTP status codes
 
-| ID     | Method | Endpoint                    | Result ||       Screenshout       |
-| ------ | ------ | --------------------------- | ------ || ---------------------   |
-| TC-001 | GET    | `/api/users`                | 200 OK ||![alt text](image.png)   |
-| TC-002 | GET    | `/api/users/1`              | 200 OK ||![alt text](image-1.png) |
-| TC-003 | GET    | `/api/users/99`             | 404    ||![alt text](image-2.png) |
-| TC-004 | POST   | `/api/users`                | 201    ||![alt text](image-3.png) |
-| TC-005 | POST   | `/api/users` Invalid        | 400    ||![alt text](image-4.png) |
-| TC-006 | PUT    | `/api/users/1`              | 204    ||![alt text](image-5.png) |
-| TC-007 | PUT    | `/api/users/222`            | 404    ||![alt text](image-6.png) |
-| TC-008 | DELETE | `/api/users/4`              | 204    ||![alt text](image-7.png) |
-| TC-009 | DELETE | `/api/users/5555` Invalid   | 404    ||![alt text](image-8.png) |
-| TC-010 | GET    | `/api/tasks`                | 200    ||![alt text](image-9.png) |
-| TC-011 | GET    | `/api/tasks/2`              | 200    ||![alt text](image-10.png)|
-| TC-012 | GET    | `/api/tasks/99` Invalid     | 404    ||![alt text](image-11.png)|
-| TC-013 | POST   | `/api/tasks`                | 201    ||![alt text](image-12.png)|
-| TC-014 | POST   | `/api/tasks` Invalid UserId | 400    ||![alt text](image-14.png)|
-| TC-015 | PUT    | `/api/tasks/2`              | 204    ||![alt text](image-15.png)|
-| TC-016 | PUT    | `/api/tasks/9999`           | 404    ||![alt text](image-16.png)|
-| TC-017 | DELETE | `/api/tasks/1`              | 204    ||![alt text](image-17.png)|
-| TC-018 | DELETE | `/api/tasks/9999`           | 404    ||![alt text](image-18.png)|
-
+| Test ID | Method | Endpoint | Expected Result | Screenshot |
+|---|---|---|---|---|
+| TC-001 | GET | `/api/users` | 200 OK | <img src="./image.png" width="300"> |
+| TC-002 | GET | `/api/users/1` | 200 OK | <img src="./image-1.png" width="300"> |
+| TC-003 | GET | `/api/users/99` | 404 Not Found | <img src="./image-2.png" width="300"> |
+| TC-004 | POST | `/api/users` | 201 Created | <img src="./image-3.png" width="300"> |
+| TC-005 | POST | `/api/users` (Invalid Data) | 400 Bad Request | <img src="./image-4.png" width="300"> |
+| TC-006 | PUT | `/api/users/1` | 204 No Content | <img src="./image-5.png" width="300"> |
+| TC-007 | PUT | `/api/users/222` | 404 Not Found | <img src="./image-6.png" width="300"> |
+| TC-008 | DELETE | `/api/users/4` | 204 No Content | <img src="./image-7.png" width="300"> |
+| TC-009 | DELETE | `/api/users/5555` | 404 Not Found | <img src="./image-8.png" width="300"> |
+| TC-010 | GET | `/api/tasks` | 200 OK | <img src="./image-9.png" width="300"> |
+| TC-011 | GET | `/api/tasks/2` | 200 OK | <img src="./image-10.png" width="300"> |
+| TC-012 | GET | `/api/tasks/99` | 404 Not Found | <img src="./image-11.png" width="300"> |
+| TC-013 | POST | `/api/tasks` | 201 Created | <img src="Day-4/image-12.png" width="300"> |
+| TC-014 | POST | `/api/tasks` (Invalid UserId) | 400 Bad Request | <img src="./image-14.png" width="300"> |
+| TC-015 | PUT | `/api/tasks/2` | 204 No Content | <img src="./image-15.png" width="300"> |
+| TC-016 | PUT | `/api/tasks/9999` | 404 Not Found | <img src="./image-16.png" width="300"> |
+| TC-017 | DELETE | `/api/tasks/1` | 204 No Content | <img src="./image-17.png" width="300"> |
+| TC-018 | DELETE | `/api/tasks/9999` | 404 Not Found | <img src="./image-18.png" width="300"> |
 ---
 
 # Swagger Documentation
 
 Swagger was used for:
 
-* Viewing API endpoints
-* Sending test requests
-* Checking request/response models
+- Viewing API endpoints
+- Sending HTTP requests
+- Testing responses
+- Checking request and response models
 
-SwaggerScreenshot:
 
-```
-![alt text](image-19.png)
-```
+## Swagger Screenshot
+
+![Swagger API Documentation](./image-19.png)
 
 ---
 
@@ -339,7 +322,6 @@ SwaggerScreenshot:
 | Swagger              | API documentation     |
 | Postman              | Testing               |
 | GitHub               | Source control        |
-| draw.io              | Database diagrams     |
 
 ---
 
@@ -359,22 +341,8 @@ After completing this project:
 
 ---
 
-# Quality Criteria Achievement
-
-| Category         | Achievement                              |
-| ---------------- | ---------------------------------------- |
-| API Design       | RESTful routes and correct HTTP codes    |
-| Database Quality | Normalized schema and EF migrations      |
-| C#/.NET Usage    | Async EF Core and clean patterns         |
-| Code Quality     | Organized project structure              |
-| Debugging        | Solved configuration and database issues |
-
----
-
 # Conclusion
 
 Task Tracker API demonstrates professional backend development using ASP.NET Core, Entity Framework Core, SQL Server, REST principles, and API testing tools.
 
 
-* 2NF
-* 3NF

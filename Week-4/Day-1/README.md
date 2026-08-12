@@ -1,380 +1,92 @@
-# Task Tracker API — Project Overview
+<div align="center">
 
-## Overview
+# Day 1 — ASP.NET Core Identity & User Registration
 
-Task Tracker API is a RESTful Web API built using **ASP.NET Core (.NET 10)**.
+*Field notes from the day I finally stopped being scared of auth.*
 
-The project manages users and tasks while applying professional backend development practices:
+![.NET](https://img.shields.io/badge/ASP.NET%20Core-Identity-512BD4?logo=dotnet&logoColor=white)
+![EF Core](https://img.shields.io/badge/Entity%20Framework-Core-512BD4?logo=dotnet&logoColor=white)
+![Postman](https://img.shields.io/badge/Tested%20with-Postman-FF6C37?logo=postman&logoColor=white)
+![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-* REST API design
-* CRUD operations
-* Entity Framework Core
-* SQL Server integration
-* EF Core migrations
-* Async database operations
-* DTO pattern
-* Validation
-* Swagger documentation
-* Postman testing
+`⏱ 8 hours` · `📄 Full report: Postman_API_Testing_Report.pdf`
+
+</div>
 
 ---
 
-# Technologies Used
+## 📌 Today in one sentence
 
-| Technology                     | Purpose                      |
-| ------------------------------ | ---------------------------- |
-| C#                             | Backend programming language |
-| ASP.NET Core Web API (.NET 10) | REST API development         |
-| Entity Framework Core          | ORM and database access      |
-| SQL Server LocalDB             | Database                     |
-| LINQ                           | Querying                     |
-| Swagger/OpenAPI                | Documentation                |
-| Postman                        | API testing                  |
-| Git & GitHub                   | Version control              |
-| draw.io                        | ERD diagrams                 |
+Authentication — specifically, *not* building it myself. ASP.NET Core Identity handles the parts of a login system that are easiest to get wrong, and today was about understanding what it gives you for free, wiring it into a real project, and proving it actually works.
 
----
+## 📌 Learning objectives
 
-# Project Structure
+- Explain what ASP.NET Core Identity provides out of the box
+- Set up Identity with Entity Framework Core
+- Implement a user registration endpoint
 
-```text
-TaskTrackerApi
+## 📌 What I learned
 
-├── Controllers
-│   ├── UsersController.cs
-│   └── TasksController.cs
-│
-├── Data
-│   └── AppDbContext.cs
-│
-├── DTOs
-│
-├── Entities
-│
-├── Migrations
-│
-├── Program.cs
-└── appsettings.json
-```
+### 1. It's a complete membership system, not just a users table
+Storage, password hashing, roles, account confirmation — all of it ships out of the box, sitting on top of Entity Framework Core. The real value isn't convenience, it's that this code has already been picked apart by Microsoft and the entire .NET community. Rolling your own version means reinventing something security-critical, badly, alone.
 
----
-
-# Architecture
-
-## Entities
-
-Database models:
-
-* User
-* TaskItem
-
-## DTOs
-
-Used classes:
-
-* UserDto
-* UserCreateDto
-* TaskDto
-* TaskCreateDto
-* TaskUpdateDto
-
-Benefits:
-
-* Prevent exposing database entities
-* Control API input
-* Add validation
-
-## Controllers
-
-Implemented controllers:
-
-* UsersController
-* TasksController
-
-Responsibilities:
-
-* Receive HTTP requests
-* Validate input
-* Access database
-* Return correct responses
-
----
-
-# Database Design
-
-Entities:
-
-```
-Users
-Tasks
-```
-
-Relationship:
-
-```
-Users 1 -------- * Tasks
-```
-
-Foreign Key:
-
-```
-Tasks.UserId → Users.Id
-```
-
-The schema follows:
-
-* 1NF
-* 2NF
-* 3NF
-# Task Tracker API — Entity Framework Core & CRUD
-
-## Entity Framework Core
-
-EF Core is used for:
-
-* Database communication
-* LINQ queries
-* Entity tracking
-* Saving changes
-* Migration management
-
-Example:
+### 2. Wiring it up is mostly one inheritance change
+Extend the existing `DbContext` to inherit from `IdentityDbContext` and the full Identity schema — Users, Roles, UserRoles, and a few supporting tables — comes along for the ride. One migration later, it's sitting next to whatever tables were already there.
 
 ```csharp
-public DbSet<User> Users => Set<User>();
+public class AppDbContext : IdentityDbContext
+{
+    public DbSet<Order> Orders => Set<Order>();
+}
 
-public DbSet<TaskItem> Tasks => Set<TaskItem>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 ```
+
+### 3. Registration is mostly plumbing, not logic
+`UserManager.CreateAsync` does the actual work — hashing the password, saving the user — in one call. Writing the endpoint is really about validating what comes in and turning the result back into the right response: success, or a clear list of what went wrong.
+
+### 4. The hashing story is more thoughtful than I expected
+Identity hashes passwords with **PBKDF2** by default — deliberately slow, and salted per user, so a leaked database can't be cracked with a rainbow table in one pass. Two users with the same password end up with completely different stored hashes.
+
+> **Note to self:** Don't ever write custom password hashing. Not "don't unless you have a good reason" — just don't. Identity's version has been battle-tested by a much bigger crowd than will ever review my code.
+
+## 📌 What I built — hands-on lab
+
+- [x] Added the Identity NuGet packages and extended the `DbContext` to inherit from `IdentityDbContext`
+- [x] Ran a migration to add the Identity schema to the database, then applied it
+- [x] Registered Identity services in `Program.cs` with `IdentityUser` and `IdentityRole`
+- [x] Implemented a registration endpoint using `UserManager.CreateAsync`, with meaningful errors for bad input
+- [x] Tested registration in Postman — once with a valid request, once with a deliberately weak password
+
+**Tools:** ASP.NET Core Identity · Entity Framework Core · Postman
+
+## 📌 Putting the endpoint through Postman
+
+With the endpoint built, the last step was proving it actually behaves — both when everything is correct and when it isn't.
+
+| Test | Request | Result | What happened |
+|---|---|---|---|
+| **Register – Valid User** | `POST /api/Auth/register` | ✅ `200 OK` | Sent a valid username, email, and a strong password. The user was created successfully through `UserManager.CreateAsync`. |
+| **Register – Weak Password** | `POST /api/Auth/register` | ❌ `400 Bad Request` | Same endpoint, same shape of request, but with a deliberately weak password. Identity rejected it and returned clear validation errors. |
+
+Both requests live in one Postman collection:
+
+```
+Task Tracker API - Week 4 Day 1
+└── Authentication
+    ├── Register - Valid User
+    └── Register - Weak Password
+```
+
+Between the two, both sides of registration are covered: a real user getting created, and a bad password getting caught before it ever reaches the database.
 
 ---
 
-# Migrations
+<div align="center">
 
-Install EF Core CLI:
+📄 **See [`Postman_API_Testing_Report.pdf`](./Postman_API_Testing_Report.pdf) for the full test report, including screenshots.**
 
-```bash
-dotnet tool install --global dotnet-ef
-```
+*— end of Day 1*
 
-Create migration:
-
-```bash
-dotnet ef migrations add InitialCreate
-```
-
-Apply migration:
-
-```bash
-dotnet ef database update
-```
-
-Check migrations:
-
-```bash
-dotnet ef migrations list
-```
-
----
-
-# CRUD Endpoints
-
-## Users
-
-| Method | Endpoint          | Description    |
-| ------ | ----------------- | -------------- |
-| GET    | `/api/users`      | Get all users  |
-| GET    | `/api/users/{id}` | Get user by ID |
-| POST   | `/api/users`      | Create user    |
-| PUT    | `/api/users/{id}` | Update user    |
-| DELETE | `/api/users/{id}` | Delete user    |
-
-## Tasks
-
-| Method | Endpoint          | Description    |
-| ------ | ----------------- | -------------- |
-| GET    | `/api/tasks`      | Get all tasks  |
-| GET    | `/api/tasks/{id}` | Get task by ID |
-| POST   | `/api/tasks`      | Create task    |
-| PUT    | `/api/tasks/{id}` | Update task    |
-| DELETE | `/api/tasks/{id}` | Delete task    |
-
-Nested resource:
-
-```
-GET /api/users/{id}/tasks
-```
-
----
-
-# Async EF Core
-
-Implemented:
-
-```csharp
-ToListAsync()
-
-FirstOrDefaultAsync()
-
-AnyAsync()
-
-SaveChangesAsync()
-```
-
-Benefits:
-
-* Non-blocking requests
-* Better scalability
-* Better performance
-
----
-
-# Change Tracking
-
-EF Core tracks loaded entities.
-
-Example:
-
-```csharp
-var task = await _context.Tasks.FindAsync(id);
-
-task.Title = dto.Title;
-
-await _context.SaveChangesAsync();
-```
-
-EF Core detects changes and generates optimized SQL updates.
-
----
-
-# Validation
-
-Implemented using Data Annotations:
-
-```csharp
-[Required]
-
-[MaxLength(200)]
-
-[EmailAddress]
-```
-
-Invalid input returns:
-
-```
-400 Bad Request
-```
-
----
-
-# HTTP Status Codes
-
-| Code | Meaning            |
-| ---- | ------------------ |
-| 200  | Successful request |
-| 201  | Resource created   |
-| 204  | No Content         |
-| 400  | Bad Request        |
-| 404  | Not Found          |
-
-# Task Tracker API — Testing & Documentation
-
-# Postman Testing
-
-All API endpoints were tested using Postman.
-
-Testing covered:
-
-* Successful requests
-* Invalid data
-* Missing resources
-* Validation errors
-* HTTP status verification
-
-| ID     | Method | Endpoint                    | Result ||       Screenshout       |
-| ------ | ------ | --------------------------- | ------ || ---------------------   |
-| TC-001 | GET    | `/api/users`                | 200 OK ||![alt text](image.png)   |
-| TC-002 | GET    | `/api/users/1`              | 200 OK ||![alt text](image-1.png) |
-| TC-003 | GET    | `/api/users/99`             | 404    ||![alt text](image-2.png) |
-| TC-004 | POST   | `/api/users`                | 201    ||![alt text](image-3.png) |
-| TC-005 | POST   | `/api/users` Invalid        | 400    ||![alt text](image-4.png) |
-| TC-006 | PUT    | `/api/users/1`              | 204    ||![alt text](image-5.png) |
-| TC-007 | PUT    | `/api/users/222`            | 404    ||![alt text](image-6.png) |
-| TC-008 | DELETE | `/api/users/4`              | 204    ||![alt text](image-7.png) |
-| TC-009 | DELETE | `/api/users/5555` Invalid   | 404    ||![alt text](image-8.png) |
-| TC-010 | GET    | `/api/tasks`                | 200    ||![alt text](image-9.png) |
-| TC-011 | GET    | `/api/tasks/2`              | 200    ||![alt text](image-10.png)|
-| TC-012 | GET    | `/api/tasks/99` Invalid     | 404    ||![alt text](image-11.png)|
-| TC-013 | POST   | `/api/tasks`                | 201    ||![alt text](image-12.png)|
-| TC-014 | POST   | `/api/tasks` Invalid UserId | 400    ||![alt text](image-14.png)|
-| TC-015 | PUT    | `/api/tasks/2`              | 204    ||![alt text](image-15.png)|
-| TC-016 | PUT    | `/api/tasks/9999`           | 404    ||![alt text](image-16.png)|
-| TC-017 | DELETE | `/api/tasks/1`              | 204    ||![alt text](image-17.png)|
-| TC-018 | DELETE | `/api/tasks/9999`           | 404    ||![alt text](image-18.png)|
-
----
-
-# Swagger Documentation
-
-Swagger was used for:
-
-* Viewing API endpoints
-* Sending test requests
-* Checking request/response models
-
-SwaggerScreenshot:
-
-```
-![alt text](image-19.png)
-```
-
----
-
-# Tools Used
-
-| Tool                 | Purpose               |
-| -------------------- | --------------------- |
-| .NET CLI             | Build and run project |
-| Entity Framework CLI | Database migrations   |
-| SQL Server LocalDB   | Database              |
-| Swagger              | API documentation     |
-| Postman              | Testing               |
-| GitHub               | Source control        |
-| draw.io              | Database diagrams     |
-
----
-
-# Learning Outcomes
-
-After completing this project:
-
-* Built RESTful APIs using ASP.NET Core
-* Implemented CRUD operations
-* Connected SQL Server with EF Core
-* Created migrations
-* Used DTO architecture
-* Applied async programming
-* Implemented validation
-* Tested APIs professionally
-* Documented backend work
-
----
-
-# Quality Criteria Achievement
-
-| Category         | Achievement                              |
-| ---------------- | ---------------------------------------- |
-| API Design       | RESTful routes and correct HTTP codes    |
-| Database Quality | Normalized schema and EF migrations      |
-| C#/.NET Usage    | Async EF Core and clean patterns         |
-| Code Quality     | Organized project structure              |
-| Debugging        | Solved configuration and database issues |
-
----
-
-# Conclusion
-
-Task Tracker API demonstrates professional backend development using ASP.NET Core, Entity Framework Core, SQL Server, REST principles, and API testing tools.
-
-
-* 2NF
-* 3NF
+</div>
