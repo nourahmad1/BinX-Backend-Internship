@@ -1,0 +1,514 @@
+{
+  "info": {
+    "_postman_id": "9bba2dac-6a96-4d7c-8d8b-25ae257840c1",
+    "name": "Task Tracker Api V3",
+    "description": "REST API testing collection for the Task Tracker API.  \nContains Users and Tasks endpoints with both success and error-path tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "TC-001 | GET All Users",
+          "id": "e6ba08a0-1ae9-4688-9c18-2d953135ab80",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-002  | Get User By ID - Existing User",
+          "id": "95403d74-b8f8-461f-9cc2-8d9fa59ecf0e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-003 | GET User By Id - Not Found",
+          "id": "352261c9-9cac-4b0f-8a99-3c6575cb976e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/99",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "99"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-004 | Create User - Valid Data",
+          "id": "25ed36a0-bff7-4669-925b-a83d3927a89a",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nour\",\r\n    \"email\":\"nour@tesy.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-005 | Create User - Invalid Data",
+          "id": "68d63586-b77d-4bd0-a98d-16440c0c87a1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nour\",\r\n    \"email\":\"nour@tesy.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-006 | Update User - Existing User",
+          "id": "1256e7f1-2241-4087-822f-7956fa7d3821",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Nour Updated\",\r\n\"email\":\"nournew@test.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-007 | Update User - Not Found",
+          "id": "87065acb-32ec-4864-971b-3b5286d2a276",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Nour Updated\",\r\n\"email\":\"nournew@test.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-008 | DELETE User - Existing User",
+          "id": "6b3fc76e-cabb-4df8-892f-6c41b404b4fa",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-009 | DELETE User - Not Found",
+          "id": "49ffcd52-6229-4e03-9071-951b1963f571",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "d616b019-31b8-4f97-aefd-390acd16a0cc"
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "TC-010 | Get All Tasks",
+          "id": "ed26149c-4dc7-4e1a-bfc7-d74ecdb1a00a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-011 | GET Task By Id - Existing Task",
+          "id": "e06e4fa6-f86a-464f-ac28-49338c7fd56e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-012 | GET Task By Id - Not Found",
+          "id": "f97037d9-9580-4c35-b558-3eab0c96ad53",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks/99",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "99"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-013 | Create Task - Valid Data",
+          "id": "6e7f17a4-76a0-4dcf-b989-d983b834433e",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n        \"title\": \"Test API Using Postman\",\r\n        \"description\": \"Create test cases\",\r\n        \"isCompleted\": false,\r\n        \"userId\": 1\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-014 | Create Task - Invalid UserId",
+          "id": "b80fd6cb-b430-4a68-bb35-32863052832d",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \r\n        \"title\": \"Wrong Task\",\r\n        \"description\": \"Testting Error\",\r\n        \"isCompleted\": false,\r\n        \"userId\":999\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task Copy",
+          "id": "9207d081-6f29-40f7-b1fa-b34b4ebc36cc",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Delete Task Copy",
+          "id": "fa237866-0540-433a-9e8e-340355f4ba07",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-017 | Update Task - Existing Task",
+          "id": "f0639612-fe3d-46e7-aafc-025ec8119a4f",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"id\": 1,\r\n        \"title\": \"Updated Task\",\r\n        \"description\": \"Updated description\",\r\n        \"isCompleted\": true,\r\n        \"userId\": 1\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-018 | Update Task - Not Found",
+          "id": "398b9829-c842-47a9-87cc-bcf4b98a9f55",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/9999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "9999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tasks Copy Copy",
+          "id": "5283eb0e-28f4-4b49-98aa-b3b03b122a42",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5138/api/v1/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5138",
+              "path": [
+                "api",
+                "v1",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "42643e49-1b4c-4846-aad9-2fc554301bbf"
+    }
+  ]
+}

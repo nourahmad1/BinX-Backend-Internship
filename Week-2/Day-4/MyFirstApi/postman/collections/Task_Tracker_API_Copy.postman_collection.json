@@ -1,0 +1,2003 @@
+{
+  "info": {
+    "_postman_id": "ea3a5d96-8f6d-4152-a877-d2d255cc6edd",
+    "name": "Task Tracker API Version2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "TC-001 | Get All Users",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "b4e08309-abf1-4fb4-86b7-417ecc56d1b5",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "b0d70da6-1ff0-4d61-90e4-dd95bee5ebf0",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "0f332ea2-3aa1-4803-832b-2195b73ecc87",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-002 | GET User By Id - Existing User",
+          "id": "8207df6b-b012-411c-b243-66002d5f1242",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-003 | GET User By Id - Not Found",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "e240bd05-878d-4475-9d23-2b17df00e7d1",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "30143c0a-56cf-479f-96ce-f3ed84d0e89e",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "ed3fbffd-4699-467e-96a7-0543e9bf94b5",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/users/99",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users",
+                "99"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-004 | Create User - Vaild Data",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "51554625-dc33-4b83-a08f-4c810a20eeff",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "5f6e99dd-c5e8-4d96-8d83-2721016fa274",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Created user has id\", () => {\r",
+                  "    pm.expect(pm.response.json()).to.have.property(\"id\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "cfff0b36-deb8-497f-9f66-c3824eedd374",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nour\",\r\n    \"email\":\"nour@tesy.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-005 | Create User - Invalid Data",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "03bbe77e-b4f6-402e-8348-f0359a5a3f13",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "87c93740-8d3a-4d91-a905-296999d894f5",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "ae7ebf2a-8d49-4ef0-87e0-43cf825de884",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\",\r\n    \"email\":\"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-006 | Update User - Exsisting User",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "77643ced-169a-467f-aca3-fc5376fa6d2f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "11151a49-f5e2-4600-bd11-6b2b9c986fd4",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "30f95b02-31f1-4ff7-ab15-3773e82a1f16",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Nour Updated\",\r\n\"email\":\"nournew@test.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-007 | Update User - Not Found",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "b6720f8e-3577-4c08-89cb-b87d1ff01c38",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "23c10546-dee0-4156-b057-faeb84ad002a",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "2fde3639-f7b1-4500-9ae1-5efd2a36adff",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Nour Updated\",\r\n\"email\":\"nournew@test.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/users/222",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users",
+                "222"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-008 | Delete User - Exsisting User",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "e1a0a419-6a13-43f3-a75e-3e7d41b6dea8",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "1c4168b4-d633-49e3-8925-c2d42ba8c3d2",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "0d0cb06e-3725-493e-9abe-a1cf6bb5583c",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/7",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-009 | Update User - Not Found",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "8867a57a-7f00-45c1-9f03-886d749303ec",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "4bb2a8c7-072c-4a92-b02e-c0f4f761046a",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "f4249b10-172b-41b6-bc22-93c703becf26",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/users/5555",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "users",
+                "5555"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "ca9452bf-88dd-4b4f-afe1-be029308d99a"
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "TC-010 | Get All Tasks",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "03620299-504b-4c03-ad2b-2624d672bd9c",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "d5483949-1e29-4808-9aeb-4650d58bf429",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "3f551254-7abd-4db6-9e52-cf41602c483b",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-011 | Get Task By Id - Exsiting Task",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "ede6835c-9bb9-477d-b65a-3e66107fb096",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "9fabd55f-f30a-4000-9f7f-56f03616fbc7",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has task id\", () => {\r",
+                  "    pm.expect(pm.response.json()).to.have.property(\"id\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "3b18320e-4f48-4c7d-bfd5-bf2bd537c824",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-012 | Get Task By Id - Not Found",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "dd7b59eb-d8b1-4ef6-b7e1-8fb684cdd5ce",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "b799e0b9-cb45-4b78-b2b5-cfdde06091d1",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "f9a0be85-5a4b-4172-969e-aa0b9b60577e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/99",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "99"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-013 | Create Task  - Valid Data",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d5c0a796-f937-408f-8876-b23eb66ece6b",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "5ebf33bf-ff2c-42f8-8732-5c2b0287a547",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Created task has id\", () => {\r",
+                  "    pm.expect(pm.response.json()).to.have.property(\"id\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "502ee2af-64ae-4b74-a10a-e09cf2c10e81",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n        \"title\": \"Learn CRUD with EF Core\",\r\n        \"userId\": 1\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-014 | Create Task  - Invalid Data",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "4da06a4b-2457-4f9f-9733-306314cc47b9",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \r\n        \"title\": \"Wrong Task\",\r\n        \"userId\":999\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-015 | Update Task - Exsiting Task",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "454ace8f-2171-4e49-a21c-c89ff2c7e367",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "db318d31-3f32-41ac-ad34-a2f17ada9bbc",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "15dd4e5f-1529-4ce6-a71c-63a5ba58c24d",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"id\": 1,\r\n        \"title\": \"Updated Task\",\r\n        \"isCompleted\": false,\r\n        \"userId\": 1\r\n    }\r\n    ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-016| Update Task - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "66c0fdf6-4c1d-484e-86df-9fbcd1c60f8b",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "485b36fc-9271-4f8a-a37a-6d5e4b3473f6",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "f063c3c4-6ff3-4fb8-9912-88023ac1f8cd",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \r\n        \"title\": \"Updated Task\",\r\n        \"isCompleted\": false\r\n    \r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/9999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "9999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-017 | Delete Task - Exsiting Task",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2c3226c9-9cf8-442e-8d18-ffb267995ed5",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "f61959a8-f599-496b-9650-2db3fe5db185",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "c265ed9a-e015-49ad-92cc-13969cfbbcaf",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-018 |  Delete Task - Not Found",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "ab7cc2d9-fd65-4650-8409-33a19ccbd6fc",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "5dde7bfb-99d3-4db7-b446-1657e39d096e",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "677ad1bd-d651-4afd-b198-2b84206450a5",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/tasks/333",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "tasks",
+                "333"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Weak Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "6b72bc13-df36-4399-9746-5b74b6b66cc9",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Weak password is rejected\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "fb3ff79a-5863-4039-8f5d-212408f2bf1a",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "fdc7d07e-5174-4dc5-84bd-4fc9bd06dbc8",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Weak User\",\r\n  \"email\": \"weakuser@example.com\",\r\n  \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Valid User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "273acd41-4150-422b-bd26-d3befe65f2e2",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Registration was successful\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response.message).to.eql(\"User registered successfully.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "e22d994d-7fe1-46fb-9e3f-38310d810cf4",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "5980a61b-2e22-4c04-bc14-deaa06bfd9f2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Test User\",\r\n  \"email\": \"testuser@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Invalid Credentials",
+          "id": "6dcee4fd-02bb-4c88-bb3f-b69f94a86efc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "3b29bf40-edab-4b02-9215-259b4b594707"
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login - Valid Credentials",
+          "id": "0d132892-64e7-4953-9c45-4642109288b0",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Wrong Password",
+          "id": "62b6d748-9e91-495e-9d95-ed9ba1187de5",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Non -Existing  Email",
+          "id": "ad94aef8-70ff-4be8-9bc5-d3f9063ae432",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser100@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Access Protected Endpoint without JWT",
+          "id": "fca229aa-8453-49ea-9e15-3bde8a9bf524",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Access Protected Endpoint with valid JWT",
+          "id": "6f748857-8a67-4da1-be26-d4c19940e543",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODYzNjc5NjgsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.Lo2a_ysmooig5jOPraW7rQR4KQsHbN14bMI7eNTEnc4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "id": "829fafe6-7c02-4dfa-a919-90ee4237b4da",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "DELETE http://localhost:5006/api/Users/{id}",
+              "protocol": "DELETE http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Users",
+                "{id}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Valid Credentials Copy",
+          "id": "89b6099c-94b6-44a6-ae82-ce1645465121",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"admin@example.com\",\r\n  \"password\": \"Admin123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC01 - Access Protected Tasks Without Toke",
+          "id": "471142ef-9e53-4134-ab83-2913892c6322",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC02 - Access Protected Tasks With Invalid Token",
+          "id": "ac2919ab-19d6-49b7-810c-b4e115925850",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC03 - Access Protected Tasks With User Token",
+          "id": "3bdafe3b-1c1e-48ca-8898-349e8e2194a5",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY0NTQ1NTIsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.vUYJYO2um63Cg3ftBBjyqXpaBetoyT-KveHGIIGHewk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC04 - Access Protected Tasks With Admin Token",
+          "id": "fc27069b-a85c-4836-b9a7-0ffc4102adb5",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY0NTQ1NTIsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.vUYJYO2um63Cg3ftBBjyqXpaBetoyT-KveHGIIGHewk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC05 - Delete User Without Authentication",
+          "id": "1f8e1c05-6f03-491e-ac20-a492759e404a",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5006/api/Users/<existing-user-id>",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Users",
+                "<existing-user-id>"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC06 - Delete User With User Role",
+          "id": "dd2c0398-7df9-4bb1-9793-b8060e78f389",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY0NTU3OTcsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.Nzj2DSD_b7ZS3o3U7K26nLb1gfcG6jqMJSyy1FYIh-k",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Users/7fb9d273-0873-4256-bac2-1d57586ee52a",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Users",
+                "7fb9d273-0873-4256-bac2-1d57586ee52a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC07 - Delete User With Admin Role",
+          "id": "c8353802-98f1-48ca-9bc4-005a3359bb05",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjU2OWQxYy00YzM0LTRmNDAtYmMzMi0yZmFlYTc5YzM4ZjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBleGFtcGxlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiUGVybWlzc2lvbiI6IkNhbk1hbmFnZVRhc2tzIiwiZXhwIjoxNzg2NDU1NDkyLCJpc3MiOiJUYXNrVHJhY2tlckFwaSIsImF1ZCI6IlRhc2tUcmFja2VyQ2xpZW50In0.kpyhwvQr68HTst1Cfyq0AccAAAtlaCPz7rKT67ppQyo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Users/7fb9d273-0873-4256-bac2-1d57586ee52a",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Users",
+                "7fb9d273-0873-4256-bac2-1d57586ee52a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC08 - Delete Task Without Authentication",
+          "id": "6e4e387f-5ac5-49f7-a10e-05e371e33c0d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC09 - Delete Task With User Role",
+          "id": "38c919ee-c725-4644-9fab-daa26efa336d",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY0NTgxOTQsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.e0vZeZ-nqJ7ZBezxWwrKZu7_DmnEIfr5G0Br3YZf-6w",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC10 - Delete Task With Admin Permission",
+          "id": "6360ed33-8383-44b0-a44d-94b2ddd0617a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "acdeddab-f0e6-4ad2-ac05-838325f2194a"
+    },
+    {
+      "name": "Validation Rule",
+      "item": [
+        {
+          "name": "TC-01 | Create Task - Empty Title",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "3bacf308-ec3f-4288-8bd8-94a60272ed63",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"\",\r\n    \"userId\": \"6ee135d1-4ac7-4783-94c4-a65766715654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-02 Create Task - Title Contains Only Spaces",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "38cede88-a7d5-4681-9728-60402aa46294",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"\",\r\n    \"userId\": \"6ee135d1-4ac7-4783-94c4-a65766715654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-03 Create Task - Title Exceeds Maximum Length",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "8b776f67-5da1-4c48-9265-089b5d055761",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"\",\r\n    \"userId\": \"6ee135d1-4ac7-4783-94c4-a65766715654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-04 Create Task - Invalid UserId",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "6112f4f5-ee87-4ea3-9be3-9261270009ec",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1NDQ1NTAsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.LhosEB7EHddZKrY4Y-By6v1sZJvnRaqLvCKBDnp74pI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Test Task\",\r\n    \"userId\": \"hello\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Tasks/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-05 Update Task - Empty Title",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "0c9e7cc2-6fa6-4e91-9873-e33cef8694f9",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1NDA1NjYsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.9blVGeFA1NZl9mbLJCsmUQeVmQOFfEAlFivJn1ZguHQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"     \",\r\n    \"isCompleted\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-06 Update Task - Title Contains Only Spaces",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "508fa4d2-42e5-486f-8abd-3b777d6999e1",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"\",\r\n    \"userId\": \"6ee135d1-4ac7-4783-94c4-a65766715654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-07 Update Task - Title Exceeds Maximum Length",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "14e97198-c0ef-4653-bc13-209e1c31a63b",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"\",\r\n    \"userId\": \"6ee135d1-4ac7-4783-94c4-a65766715654\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "df4f2b90-3193-4817-879b-429ca706893e"
+    }
+  ]
+}
