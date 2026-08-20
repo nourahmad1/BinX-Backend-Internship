@@ -7,7 +7,6 @@
 ![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-Web%20API-512BD4?logo=dotnet&logoColor=white)
 ![xUnit](https://img.shields.io/badge/xUnit-Unit%20Testing-5E5E5E?logo=xunit&logoColor=white)
-![Moq](https://img.shields.io/badge/Moq-Mocking-4B8BBE)
 ![EF Core](https://img.shields.io/badge/Entity%20Framework-Core-512BD4?logo=dotnet&logoColor=white)
 ![Status](https://img.shields.io/badge/status-complete-2ea44c)
 
@@ -32,21 +31,6 @@ Choosing a realistic Phase 3 capstone project and learning how to start testing 
 
 > The Cardiac Patient Monitoring API will provide a REST API for managing patients and their cardiac monitoring data, including authentication, patient records, vital signs, medications, and appointments. The project will use ASP.NET Core, Entity Framework Core, SQL Server, JWT authentication, role-based access control, validation, and automated testing. By Week 9, the project will include API documentation, a Postman collection, database migrations and ERD, security, unit and integration tests, deployment, CI/CD, and a complete README.
 
-**Professional baseline (Week 9 target):**
-
-- Fully documented REST API
-- Complete Postman collection
-- Normalized relational database
-- EF Core migrations
-- Documented ERD
-- JWT-based authentication
-- Role-based access control
-- Unit tests
-- Integration tests
-- Tests covering critical routes
-- Deployment on Azure App Service or Railway
-- Passing CI/CD pipeline
-- Complete README
 
 ## 📌 What I learned
 
