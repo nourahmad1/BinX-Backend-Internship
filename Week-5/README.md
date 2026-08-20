@@ -70,39 +70,7 @@ public void Add_ReturnsCorrectSum(int a, int b, int expected)
 }
 ```
 
-### 3. Arrange-Act-Assert keeps tests readable
-Separating a test into **Arrange** (test data, the object under test, mocks, expected behavior), **Act** (call the method), and **Assert** (verify the result) makes each test easier to follow — and much easier to debug when something fails.
-
-### 4. Mocking keeps tests focused on the controller, not its dependencies
-Testing `AuthController` login didn't require a real `UserManager` or JWT service — Moq stands in for both:
-
-```csharp
-userManager
-    .Setup(x => x.FindByEmailAsync("test@example.com"))
-    .ReturnsAsync(user);
-
-userManager
-    .Setup(x => x.CheckPasswordAsync(user, "Password123!"))
-    .ReturnsAsync(true);
-
-_jwtServiceMock
-    .Setup(x => x.GenerateToken(user))
-    .Returns(new AuthTokenResult
-    {
-        Token = "fake-jwt-token",
-        ExpiresAt = DateTime.UtcNow.AddMinutes(60)
-    });
-```
-
-For invalid login, the test also checks that a token is **never** generated — verifying behavior, not just the response:
-
-```csharp
-_jwtServiceMock.Verify(
-    x => x.GenerateToken(It.IsAny<ApplicationUser>()),
-    Times.Never);
-```
-
-### 5. Testing a JWT means reading it back, not just checking it exists
+### 4. Testing a JWT means reading it back, not just checking it exists
 `JwtService` tests decode the generated token and assert on its actual claims — user ID, email, full name, and a future expiration — instead of only checking that a non-empty string came back:
 
 ```csharp
@@ -115,7 +83,7 @@ Assert.Equal(
         c => c.Type == JwtRegisteredClaimNames.Sub).Value);
 ```
 
-### 6. EF Core InMemory isolates database tests from the real database
+### 5. EF Core InMemory isolates database tests from the real database
 `PatientsController` depends on `AppDbContext`, so its tests run against an **EF Core InMemory** database instead of the real SQL Server instance — covering get all, get by ID, create, update, delete, and the not-found case, without touching development data.
 
 > **Note to self:** testing isn't something to bolt on at the end — writing the test alongside the feature is what actually catches bad assumptions early.
@@ -174,7 +142,7 @@ Build succeeded
 
 **Day 1 — Complete ✅**
 
-`Healthcare Management API` · `xUnit` · `Moq` · `Arrange-Act-Assert` · `26/26 Tests Passing`
+`Healthcare Management API` · `xUnit` · `Arrange-Act-Assert` · `26/26 Tests Passing`
 
 *— end of Day 1*
 
