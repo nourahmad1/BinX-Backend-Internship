@@ -1995,6 +1995,447 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "TC-01 Verify Login Allows Requests Within Rate Limit",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "347bc19d-1939-4fac-b2ad-d499287a0f71",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-02 Verify Login Rejects Requests After Rate Limit Is Exceeded",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "335729ed-4a47-4638-bc3c-352dc183ce98",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY2Mzc1NTksImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.y3JJAMN3m2JmTrUMTIWjo4WEeN7PjaXIA1vlopY-8Mg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text",
+                "uuid": "500cc9f0-4c3b-47a5-9480-638504d2d0fe"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-03 — Verify API Allows Requests From the Configured Origin",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "f3ab49e0-6ce8-42a5-9742-7741a1023704",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY1Mzg2NjMsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.16v6aLLBJpNoX5a95WDNhc4sFXL4tQx0IEDkJRNUEjE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Tasks",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-04 — Verify API Rejects Requests From an Unconfigured Origin",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "9921787d-bac3-43c7-b926-c618da155b0d",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY2Mzc5MzgsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.F_W3NAVPE7JC8xaSM0EvdftkLe4kvHnhjxPyTvgUb_4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:4000",
+                "type": "text",
+                "uuid": "f03fd0dc-22f0-4e54-869f-635615abae21"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-05 — Verify HTTP Requests Are Redirected to HTTPS",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "591477ed-aa3c-41b8-b0c0-e156461b8046",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY2Mzc5MzgsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.F_W3NAVPE7JC8xaSM0EvdftkLe4kvHnhjxPyTvgUb_4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:4000",
+                "type": "text",
+                "uuid": "f03fd0dc-22f0-4e54-869f-635615abae21"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-06 — Verify HSTS Header Is Present",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "2e3afcdc-2fd7-4a50-b9e4-66cecc53315f",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "301cfe4e-46e9-4f9f-b24a-f45edb4eded1",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "4c59a346-11c5-4752-a29d-bb1db6d5ba79",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWUxMzVkMS00YWM3LTQ3ODMtOTRjNC1hNjU3NjY3MTU2NTQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0dXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3ODY2Mzc5MzgsImlzcyI6IlRhc2tUcmFja2VyQXBpIiwiYXVkIjoiVGFza1RyYWNrZXJDbGllbnQifQ.F_W3NAVPE7JC8xaSM0EvdftkLe4kvHnhjxPyTvgUb_4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:4000",
+                "type": "text",
+                "uuid": "f03fd0dc-22f0-4e54-869f-635615abae21"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \r\n  \"email\": \"testuser1@example.com\",\r\n  \"password\": \"StrongPassword123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5006/api/Auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5006",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
         }
       ],
       "id": "df4f2b90-3193-4817-879b-429ca706893e"
