@@ -10,7 +10,7 @@
 ![HTTPS](https://img.shields.io/badge/Transport-HTTPS%20%2F%20HSTS-2ea44f)
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
-`⏱ 8 hours` · `🔎 No Postman testing today — configuration & review day`
+`⏱ 8 hours` · 
 
 </div>
 
@@ -78,17 +78,6 @@ Ordinary LINQ — `Where()`, `AnyAsync()`, `FirstOrDefaultAsync()`, `FindAsync()
 
 **Tools:** ASP.NET Core Rate Limiting Middleware · CORS Middleware · `UseHttpsRedirection()` · HSTS · Security Header Middleware · Entity Framework Core (LINQ parameterization, `FromSqlInterpolated`)
 
-## 📌 A note on testing today
-
-Days 2–4 each closed with a Postman pass confirming status codes and response shapes against a running endpoint. Today's work is different in kind — it's middleware and pipeline configuration (rate-limit windows, an allowed-origins list, header values, HSTS settings) plus a manual code review for raw SQL usage, rather than behavior exposed through request/response pairs. That's why there's no Postman test table in today's report: the verification here was configuration review and manual origin/rate-limit checks, not endpoint-by-endpoint API calls.
-
-## 📌 Next steps
-
-- Add automated tests (or a small Postman collection) that exercise the rate limiter's actual threshold and the CORS-rejection path, so this layer gets the same regression coverage as Days 2–4
-- Move HSTS and any environment-specific CORS origins into per-environment configuration before deploying beyond local development
-- Revisit the Content-Security-Policy once the frontend's real script/style sources are finalized, rather than leaving it at a starter baseline
-
----
 
 <div align="center">
 
