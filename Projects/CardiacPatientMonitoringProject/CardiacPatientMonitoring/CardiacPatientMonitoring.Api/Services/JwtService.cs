@@ -23,61 +23,91 @@ public class JwtService : IJwtService
     public async Task<AuthTokenResult> GenerateTokenAsync(
         ApplicationUser user)
     {
-        // Read JWT settings from appsettings.json
-        var jwtSettings = _configuration.GetSection("Jwt");
+        // =========================================================
+        // JWT Configuration
+        // =========================================================
 
-        var issuer = jwtSettings["Issuer"]
-            ?? throw new InvalidOperationException(
-                "JWT Issuer is not configured.");
+        var jwtSettings =
+            _configuration.GetSection("Jwt");
 
-        var audience = jwtSettings["Audience"]
-            ?? throw new InvalidOperationException(
-                "JWT Audience is not configured.");
-
-        var secretKey = jwtSettings["SecretKey"]
+        var secretKey =
+            jwtSettings["SecretKey"]
             ?? throw new InvalidOperationException(
                 "JWT SecretKey is not configured.");
 
-        // Use configured expiry time,
-        // or 60 minutes if it is missing
-        var expiryMinutes = int.TryParse(
-            jwtSettings["ExpiryMinutes"],
-            out var minutes)
-            ? minutes
-            : 60;
+        var issuer =
+            jwtSettings["Issuer"]
+            ?? throw new InvalidOperationException(
+                "JWT Issuer is not configured.");
 
-        var expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
+        var audience =
+            jwtSettings["Audience"]
+            ?? throw new InvalidOperationException(
+                "JWT Audience is not configured.");
 
-        // Get all roles assigned to the user
-        var roles = await _userManager.GetRolesAsync(user);
+        var expiryMinutes =
+            int.Parse(
+                jwtSettings["ExpiryMinutes"] ?? "60");
 
-        // Add user information to the JWT
+        // =========================================================
+        // Get User Roles
+        // =========================================================
+
+        var roles =
+            await _userManager.GetRolesAsync(user);
+
+        // =========================================================
+        // Create Claims
+        // =========================================================
+
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+            new Claim(
+                ClaimTypes.NameIdentifier,
+                user.Id),
 
-            new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.Name, user.FullName)
+            new Claim(
+                ClaimTypes.Name,
+                user.UserName ?? string.Empty),
+
+            new Claim(
+                ClaimTypes.Email,
+                user.Email ?? string.Empty)
         };
 
-        // Add each Identity role as a Role claim
+        // Add user's roles to JWT
         foreach (var role in roles)
         {
             claims.Add(
-                new Claim(ClaimTypes.Role, role));
+                new Claim(
+                    ClaimTypes.Role,
+                    role));
         }
 
-        // Create signing key
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(secretKey));
+        // =========================================================
+        // Create Signing Key
+        // =========================================================
 
-        var credentials = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha256);
+        var key =
+            new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(secretKey));
 
+        var credentials =
+            new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
+
+        // =========================================================
+        // Calculate Expiration
+        // =========================================================
+
+        var expiresAt =
+            DateTime.UtcNow.AddMinutes(expiryMinutes);
+
+        // =========================================================
         // Create JWT
+        // =========================================================
+
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
@@ -85,12 +115,21 @@ public class JwtService : IJwtService
             expires: expiresAt,
             signingCredentials: credentials);
 
-        // Return token and expiration time
+        // =========================================================
+        // Convert JWT to String
+        // =========================================================
+
+        var tokenString =
+            new JwtSecurityTokenHandler()
+                .WriteToken(token);
+
+        // =========================================================
+        // Return Token Result
+        // =========================================================
+
         return new AuthTokenResult
         {
-            Token = new JwtSecurityTokenHandler()
-                .WriteToken(token),
-
+            Token = tokenString,
             ExpiresAt = expiresAt
         };
     }

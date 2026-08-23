@@ -36,7 +36,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             "DefaultConnection")));
 
 // =========================================================
-// ASP.NET Core Identity
+// ASP.NET Core Identity + Roles
 // =========================================================
 
 builder.Services
@@ -66,8 +66,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 // JWT Configuration
 // =========================================================
 
-var jwtSettings =
-    builder.Configuration.GetSection("Jwt");
+var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 var secretKey =
     jwtSettings["SecretKey"]
@@ -107,11 +106,13 @@ builder.Services
                     new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(secretKey)),
 
-                // JWT roles are stored using ClaimTypes.Role
-                RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+                // Roles are stored using ClaimTypes.Role
+                RoleClaimType =
+                    System.Security.Claims.ClaimTypes.Role,
 
-                // User name is stored using ClaimTypes.Name
-                NameClaimType = System.Security.Claims.ClaimTypes.Name
+                // Username is stored using ClaimTypes.Name
+                NameClaimType =
+                    System.Security.Claims.ClaimTypes.Name
             };
     });
 
@@ -139,8 +140,7 @@ builder.Services.AddSwaggerGen(options =>
             Scheme = "bearer",
             BearerFormat = "JWT",
             In = ParameterLocation.Header,
-            Description =
-                "Enter your JWT token."
+            Description = "Enter your JWT token."
         });
 
     options.AddSecurityRequirement(document =>
@@ -215,7 +215,7 @@ using (var scope = app.Services.CreateScope())
     // Apply pending migrations
     await dbContext.Database.MigrateAsync();
 
-    // Create roles, admin account, and sample data
+    // Create roles, users, and sample data
     await SeedData.InitializeAsync(
         dbContext,
         userManager,

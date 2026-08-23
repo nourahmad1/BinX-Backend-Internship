@@ -22,11 +22,11 @@ public class VitalSignsController : ControllerBase
 
     // =========================================================
     // GET: api/VitalSigns
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<VitalSignResponseDto>>> GetVitalSigns()
     {
         var vitalSigns = await _context.VitalSigns
@@ -50,11 +50,11 @@ public class VitalSignsController : ControllerBase
 
     // =========================================================
     // GET: api/VitalSigns/patient/{patientId}
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet("patient/{patientId:int}")]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<VitalSignResponseDto>>> GetPatientVitalSigns(
         int patientId)
     {
@@ -92,11 +92,11 @@ public class VitalSignsController : ControllerBase
 
     // =========================================================
     // GET: api/VitalSigns/{id}
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<VitalSignResponseDto>> GetVitalSign(int id)
     {
         var vitalSign = await _context.VitalSigns
