@@ -16,7 +16,7 @@
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
 **BinX Backend Internship | .NET 10**
-`📄 Full testing report:` [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf)
+`📄 Full testing report:` [`Cardiac_API_Validation_Testing_Report.pdf`](./Cardiac_API_Validation_Testing_Report.pdf)
 
 </div>
 
@@ -206,7 +206,7 @@ Full detailed evidence — including per-endpoint request/response pairs and scr
 
 Two issues were caught and fixed during testing: an invalid heart rate (`500`) initially returned `200 OK` instead of `400`, and a missing medication `StartDate` was silently defaulting to `0001-01-01T00:00:00` instead of being rejected. Both now correctly return `400 Bad Request`.
 
-📄 **See [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf) for the full test report, including per-test-case evidence sections with screenshot placeholders.**
+📄 **See [`Cardiac_API_Validation_Testing_Report.pdf`](./Cardiac_API_Validation_Testing_Report.pdf) for the full test report, including per-test-case evidence sections with screenshot placeholders.**
 
 > **Note to self:** the biggest part of this project wasn't any one controller or technology — it was learning how the layers change each other. Authentication protects the request. DTOs control what data enters. Validation decides whether that data makes sense. Controllers handle the operation. EF Core talks to the database. Relationships keep the medical records honest. Testing verifies all of it actually behaves the way it's supposed to.
 
@@ -221,7 +221,7 @@ Two issues were caught and fixed during testing: an invalid heart rate (`500`) i
 
 <div align="center">
 
-📄 **Full testing report:** [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf)
+📄 **Full testing report:** [`Cardiac_API_Validation_Testing_Report.pdf`](./Cardiac_API_Validation_Testing_Report.pdf)
 
 **Cardiac Patient Monitoring API** — a complete backend built during the BinX Backend Internship: authentication, database design, medical resources, validation, testing, and debugging.
 
