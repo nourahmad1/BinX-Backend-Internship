@@ -119,6 +119,7 @@ public class AuthController : ControllerBase
                 {
                     message =
                         "User was created but could not be assigned to Doctor role.",
+
                     errors =
                         roleAssignmentResult.Errors.Select(
                             e => e.Description)
@@ -126,11 +127,19 @@ public class AuthController : ControllerBase
         }
 
         // =====================================================
-        // Generate JWT
+        // Generate JWT with role claims
         // =====================================================
 
-        return Ok(
-            _jwtService.GenerateToken(user));
+        var token =
+            await _jwtService.GenerateTokenAsync(user);
+
+        return Ok(new AuthResponseDto
+        {
+            Token = token.Token,
+            ExpiresAt = token.ExpiresAt,
+            Email = user.Email ?? string.Empty,
+            FullName = user.FullName
+        });
     }
 
     // =========================================================
@@ -156,8 +165,17 @@ public class AuthController : ControllerBase
             });
         }
 
-        return Ok(
-            _jwtService.GenerateToken(user));
+        // Generate JWT with the user's roles
+        var token =
+            await _jwtService.GenerateTokenAsync(user);
+
+        return Ok(new AuthResponseDto
+        {
+            Token = token.Token,
+            ExpiresAt = token.ExpiresAt,
+            Email = user.Email ?? string.Empty,
+            FullName = user.FullName
+        });
     }
 
     // =========================================================
@@ -176,12 +194,15 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        var roles =
+            await _userManager.GetRolesAsync(user);
+
         return Ok(new
         {
             user.Id,
             user.Email,
             user.FullName,
-            Roles = await _userManager.GetRolesAsync(user)
+            Roles = roles
         });
     }
 }

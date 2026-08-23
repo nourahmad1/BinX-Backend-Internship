@@ -1,4 +1,3 @@
-
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -20,8 +19,13 @@ public class PatientsController : ControllerBase
         _context = context;
     }
 
-    // Get all patients
+    // =========================================================
+    // GET: api/Patients
+    // Admin, Doctor, Nurse
+    // =========================================================
+
     [HttpGet]
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
     public async Task<ActionResult<IEnumerable<PatientResponseDto>>> GetPatients()
     {
         var patients = await _context.Patients
@@ -43,8 +47,13 @@ public class PatientsController : ControllerBase
         return Ok(patients);
     }
 
-    // Get one patient by ID
+    // =========================================================
+    // GET: api/Patients/{id}
+    // Admin, Doctor, Nurse
+    // =========================================================
+
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
     public async Task<ActionResult<PatientResponseDto>> GetPatient(int id)
     {
         var patient = await _context.Patients
@@ -73,8 +82,13 @@ public class PatientsController : ControllerBase
         return Ok(patient);
     }
 
-    // Create a new patient
+    // =========================================================
+    // POST: api/Patients
+    // Admin, Doctor
+    // =========================================================
+
     [HttpPost]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> CreatePatient(
         PatientCreateDto dto)
     {
@@ -108,8 +122,13 @@ public class PatientsController : ControllerBase
             response);
     }
 
-    // Update an existing patient
+    // =========================================================
+    // PUT: api/Patients/{id}
+    // Admin, Doctor
+    // =========================================================
+
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> UpdatePatient(
         int id,
         PatientUpdateDto dto)
@@ -147,8 +166,13 @@ public class PatientsController : ControllerBase
         return Ok(response);
     }
 
-    // Delete an existing patient
+    // =========================================================
+    // DELETE: api/Patients/{id}
+    // Admin, Doctor
+    // =========================================================
+
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<IActionResult> DeletePatient(int id)
     {
         var patient = await _context.Patients

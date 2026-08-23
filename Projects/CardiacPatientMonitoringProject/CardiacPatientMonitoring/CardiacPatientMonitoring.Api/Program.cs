@@ -32,7 +32,8 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Configuration.GetConnectionString(
+            "DefaultConnection")));
 
 // =========================================================
 // ASP.NET Core Identity
@@ -104,7 +105,13 @@ builder.Services
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(secretKey))
+                        Encoding.UTF8.GetBytes(secretKey)),
+
+                // JWT roles are stored using ClaimTypes.Role
+                RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+
+                // User name is stored using ClaimTypes.Name
+                NameClaimType = System.Security.Claims.ClaimTypes.Name
             };
     });
 
@@ -198,10 +205,12 @@ using (var scope = app.Services.CreateScope())
         services.GetRequiredService<AppDbContext>();
 
     var userManager =
-        services.GetRequiredService<UserManager<ApplicationUser>>();
+        services.GetRequiredService<
+            UserManager<ApplicationUser>>();
 
     var roleManager =
-        services.GetRequiredService<RoleManager<IdentityRole>>();
+        services.GetRequiredService<
+            RoleManager<IdentityRole>>();
 
     // Apply pending migrations
     await dbContext.Database.MigrateAsync();
