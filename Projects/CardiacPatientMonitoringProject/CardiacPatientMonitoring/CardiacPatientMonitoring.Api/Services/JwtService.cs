@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CardiacPatientMonitoring.Api.Entities;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CardiacPatientMonitoring.Api.Services;
@@ -10,27 +10,36 @@ namespace CardiacPatientMonitoring.Api.Services;
 public class JwtService : IJwtService
 {
     private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public JwtService(IConfiguration configuration)
+    public JwtService(
+        IConfiguration configuration,
+        UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
+        _userManager = userManager;
     }
 
-    public AuthTokenResult GenerateToken(ApplicationUser user)
+    public async Task<AuthTokenResult> GenerateTokenAsync(
+        ApplicationUser user)
     {
-        // Read the JWT settings from appsettings.json
+        // Read JWT settings from appsettings.json
         var jwtSettings = _configuration.GetSection("Jwt");
 
         var issuer = jwtSettings["Issuer"]
-            ?? throw new InvalidOperationException("JWT Issuer is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT Issuer is not configured.");
 
         var audience = jwtSettings["Audience"]
-            ?? throw new InvalidOperationException("JWT Audience is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT Audience is not configured.");
 
         var secretKey = jwtSettings["SecretKey"]
-            ?? throw new InvalidOperationException("JWT SecretKey is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT SecretKey is not configured.");
 
-        // Use the configured expiry time, or 60 minutes if it is missing
+        // Use configured expiry time,
+        // or 60 minutes if it is missing
         var expiryMinutes = int.TryParse(
             jwtSettings["ExpiryMinutes"],
             out var minutes)
@@ -39,17 +48,28 @@ public class JwtService : IJwtService
 
         var expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
 
-        // Add the user information that will be stored inside the token
+        // Get all roles assigned to the user
+        var roles = await _userManager.GetRolesAsync(user);
+
+        // Add user information to the JWT
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+
             new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Email, user.Email ?? string.Empty),
             new(ClaimTypes.Name, user.FullName)
         };
 
-        // Create the key used to sign the token
+        // Add each Identity role as a Role claim
+        foreach (var role in roles)
+        {
+            claims.Add(
+                new Claim(ClaimTypes.Role, role));
+        }
+
+        // Create signing key
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(secretKey));
 
@@ -57,7 +77,7 @@ public class JwtService : IJwtService
             key,
             SecurityAlgorithms.HmacSha256);
 
-        // Create the JWT with the issuer, audience, claims, and expiration time
+        // Create JWT
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
@@ -65,10 +85,12 @@ public class JwtService : IJwtService
             expires: expiresAt,
             signingCredentials: credentials);
 
-        // Convert the token to a string and return it with its expiry time
+        // Return token and expiration time
         return new AuthTokenResult
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = new JwtSecurityTokenHandler()
+                .WriteToken(token),
+
             ExpiresAt = expiresAt
         };
     }

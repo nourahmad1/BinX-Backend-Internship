@@ -1,4 +1,3 @@
-
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -11,23 +10,84 @@ namespace CardiacPatientMonitoring.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class MedicationsController : ControllerBase
+public class AppointmentsController : ControllerBase
 {
     private readonly AppDbContext _context;
 
-    public MedicationsController(AppDbContext context)
+    public AppointmentsController(AppDbContext context)
     {
         _context = context;
     }
 
-    // Get medications for a specific patient
+    // =========================================================
+    // GET: api/Appointments
+    // Admin, Doctor, Nurse
+    // =========================================================
+
+    [HttpGet]
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetAppointments(
+        [FromQuery] int? patientId,
+        [FromQuery] string? status,
+        [FromQuery] string? doctorName)
+    {
+        var query = _context.Appointments
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (patientId.HasValue)
+        {
+            query = query.Where(
+                appointment => appointment.PatientId == patientId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            var normalizedStatus = status.Trim();
+
+            query = query.Where(
+                appointment => appointment.Status == normalizedStatus);
+        }
+
+        if (!string.IsNullOrWhiteSpace(doctorName))
+        {
+            var normalizedDoctorName = doctorName.Trim();
+
+            query = query.Where(
+                appointment =>
+                    appointment.DoctorName.Contains(normalizedDoctorName));
+        }
+
+        var appointments = await query
+            .OrderByDescending(
+                appointment => appointment.AppointmentDate)
+            .Select(appointment => new AppointmentResponseDto
+            {
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
+            })
+            .ToListAsync();
+
+        return Ok(appointments);
+    }
+
+    // =========================================================
+    // GET: api/Appointments/patient/{patientId}
+    // Admin, Doctor, Nurse
+    // =========================================================
+
     [HttpGet("patient/{patientId:int}")]
-    public async Task<ActionResult<IEnumerable<MedicationResponseDto>>>
-        GetPatientMedications(
-            int patientId,
-            [FromQuery] string? search = null)
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
+        GetPatientAppointments(int patientId)
     {
         var patientExists = await _context.Patients
+            .AsNoTracking()
             .AnyAsync(patient => patient.Id == patientId);
 
         if (!patientExists)
@@ -38,74 +98,76 @@ public class MedicationsController : ControllerBase
             });
         }
 
-        var query = _context.Medications
+        var appointments = await _context.Appointments
             .AsNoTracking()
-            .Where(medication => medication.PatientId == patientId);
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.Where(medication =>
-                medication.Name.Contains(search) ||
-                medication.Dosage.Contains(search) ||
-                medication.Frequency.Contains(search));
-        }
-
-        var medications = await query
-            .OrderByDescending(medication => medication.StartDate)
-            .Select(medication => new MedicationResponseDto
+            .Where(appointment =>
+                appointment.PatientId == patientId)
+            .OrderByDescending(
+                appointment => appointment.AppointmentDate)
+            .Select(appointment => new AppointmentResponseDto
             {
-                Id = medication.Id,
-                PatientId = medication.PatientId,
-                Name = medication.Name,
-                Dosage = medication.Dosage,
-                Frequency = medication.Frequency,
-                StartDate = medication.StartDate,
-                EndDate = medication.EndDate,
-                Notes = medication.Notes
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .ToListAsync();
 
-        return Ok(medications);
+        return Ok(appointments);
     }
 
-    // Get one medication by ID
+    // =========================================================
+    // GET: api/Appointments/{id}
+    // Admin, Doctor, Nurse
+    // =========================================================
+
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<MedicationResponseDto>>
-        GetMedication(int id)
+    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        GetAppointment(int id)
     {
-        var medication = await _context.Medications
+        var appointment = await _context.Appointments
             .AsNoTracking()
-            .Where(medication => medication.Id == id)
-            .Select(medication => new MedicationResponseDto
+            .Where(appointment => appointment.Id == id)
+            .Select(appointment => new AppointmentResponseDto
             {
-                Id = medication.Id,
-                PatientId = medication.PatientId,
-                Name = medication.Name,
-                Dosage = medication.Dosage,
-                Frequency = medication.Frequency,
-                StartDate = medication.StartDate,
-                EndDate = medication.EndDate,
-                Notes = medication.Notes
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .FirstOrDefaultAsync();
 
-        if (medication is null)
+        if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Medication with ID {id} was not found."
+                message = $"Appointment with ID {id} was not found."
             });
         }
 
-        return Ok(medication);
+        return Ok(appointment);
     }
 
-    // Create a new medication
+    // =========================================================
+    // POST: api/Appointments
+    // Admin, Doctor
+    // =========================================================
+
     [HttpPost]
-    public async Task<ActionResult<MedicationResponseDto>>
-        CreateMedication(MedicationCreateDto dto)
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        CreateAppointment(
+            [FromBody] AppointmentCreateDto dto)
     {
         var patientExists = await _context.Patients
+            .AsNoTracking()
             .AnyAsync(patient => patient.Id == dto.PatientId);
 
         if (!patientExists)
@@ -116,99 +178,119 @@ public class MedicationsController : ControllerBase
             });
         }
 
-        var medication = new Medication
+        var appointment = new Appointment
         {
             PatientId = dto.PatientId,
-            Name = dto.Name,
-            Dosage = dto.Dosage,
-            Frequency = dto.Frequency,
-            StartDate = dto.StartDate!.Value,
-            EndDate = dto.EndDate,
-            Notes = dto.Notes
+            AppointmentDate = dto.AppointmentDate!.Value,
+            DoctorName = dto.DoctorName.Trim(),
+            Reason = dto.Reason.Trim(),
+            Status = dto.Status.Trim(),
+            Notes = string.IsNullOrWhiteSpace(dto.Notes)
+                ? null
+                : dto.Notes.Trim()
         };
 
-        await _context.Medications.AddAsync(medication);
+        await _context.Appointments.AddAsync(appointment);
         await _context.SaveChangesAsync();
 
-        var response = new MedicationResponseDto
-        {
-            Id = medication.Id,
-            PatientId = medication.PatientId,
-            Name = medication.Name,
-            Dosage = medication.Dosage,
-            Frequency = medication.Frequency,
-            StartDate = medication.StartDate,
-            EndDate = medication.EndDate,
-            Notes = medication.Notes
-        };
+        var response = ToDto(appointment);
 
         return CreatedAtAction(
-            nameof(GetMedication),
-            new { id = medication.Id },
+            nameof(GetAppointment),
+            new { id = appointment.Id },
             response);
     }
 
-    // Update an existing medication
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<MedicationResponseDto>>
-        UpdateMedication(
-            int id,
-            MedicationUpdateDto dto)
-    {
-        var medication = await _context.Medications
-            .FirstOrDefaultAsync(medication => medication.Id == id);
+    // =========================================================
+    // PUT: api/Appointments/{id}
+    // Admin, Doctor
+    // =========================================================
 
-        if (medication is null)
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        UpdateAppointment(
+            int id,
+            [FromBody] AppointmentUpdateDto dto)
+    {
+        var appointment = await _context.Appointments
+            .FirstOrDefaultAsync(
+                appointment => appointment.Id == id);
+
+        if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Medication with ID {id} was not found."
+                message = $"Appointment with ID {id} was not found."
             });
         }
 
-        medication.Name = dto.Name;
-        medication.Dosage = dto.Dosage;
-        medication.Frequency = dto.Frequency;
-        medication.StartDate = dto.StartDate!.Value;
-        medication.EndDate = dto.EndDate;
-        medication.Notes = dto.Notes;
+        appointment.AppointmentDate =
+            dto.AppointmentDate!.Value;
+
+        appointment.DoctorName =
+            dto.DoctorName.Trim();
+
+        appointment.Reason =
+            dto.Reason.Trim();
+
+        appointment.Status =
+            dto.Status.Trim();
+
+        appointment.Notes =
+            string.IsNullOrWhiteSpace(dto.Notes)
+                ? null
+                : dto.Notes.Trim();
 
         await _context.SaveChangesAsync();
 
-        var response = new MedicationResponseDto
-        {
-            Id = medication.Id,
-            PatientId = medication.PatientId,
-            Name = medication.Name,
-            Dosage = medication.Dosage,
-            Frequency = medication.Frequency,
-            StartDate = medication.StartDate,
-            EndDate = medication.EndDate,
-            Notes = medication.Notes
-        };
-
-        return Ok(response);
+        return Ok(ToDto(appointment));
     }
 
-    // Delete a medication
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteMedication(int id)
-    {
-        var medication = await _context.Medications
-            .FirstOrDefaultAsync(medication => medication.Id == id);
+    // =========================================================
+    // DELETE: api/Appointments/{id}
+    // Admin, Doctor
+    // =========================================================
 
-        if (medication is null)
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<IActionResult> DeleteAppointment(int id)
+    {
+        var appointment = await _context.Appointments
+            .FirstOrDefaultAsync(
+                appointment => appointment.Id == id);
+
+        if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Medication with ID {id} was not found."
+                message = $"Appointment with ID {id} was not found."
             });
         }
 
-        _context.Medications.Remove(medication);
+        _context.Appointments.Remove(appointment);
 
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    // =========================================================
+    // Convert entity to DTO
+    // =========================================================
+
+    private static AppointmentResponseDto ToDto(
+        Appointment appointment)
+    {
+        return new AppointmentResponseDto
+        {
+            Id = appointment.Id,
+            PatientId = appointment.PatientId,
+            AppointmentDate = appointment.AppointmentDate,
+            DoctorName = appointment.DoctorName,
+            Reason = appointment.Reason,
+            Status = appointment.Status,
+            Notes = appointment.Notes
+        };
     }
 }

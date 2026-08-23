@@ -5,7 +5,7 @@ namespace CardiacPatientMonitoring.Api.Services;
 public interface IJwtService
 {
     // Creates a JWT token for the logged-in user
-    AuthTokenResult GenerateToken(ApplicationUser user);
+    Task<AuthTokenResult> GenerateTokenAsync(ApplicationUser user);
 }
 
 public class AuthTokenResult
