@@ -16,7 +16,7 @@
 ![Status](https://img.shields.io/badge/status-complete-2ea44f)
 
 **BinX Backend Internship | .NET 10**
-`📄 Full testing report:` [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx)
+`📄 Full testing report:` [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf)
 
 </div>
 
@@ -221,7 +221,7 @@ Two issues were caught and fixed during testing: an invalid heart rate (`500`) i
 
 <div align="center">
 
-📄 **Full testing report:** [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.docx)
+📄 **Full testing report:** [`Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf`](./Cardiac_Patient_Monitoring_API_Validation_Testing_Report.pdf)
 
 **Cardiac Patient Monitoring API** — a complete backend built during the BinX Backend Internship: authentication, database design, medical resources, validation, testing, and debugging.
 
