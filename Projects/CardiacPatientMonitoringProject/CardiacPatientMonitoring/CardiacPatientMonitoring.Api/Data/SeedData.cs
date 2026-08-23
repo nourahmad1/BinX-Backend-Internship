@@ -8,12 +8,46 @@ public static class SeedData
 {
     public static async Task InitializeAsync(
         AppDbContext context,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager)
     {
+        // =========================================================
+        // Create application roles
+        // =========================================================
+
+        string[] roles =
+        {
+            "Doctor",
+            "Admin",
+            "Nurse"
+        };
+
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                var roleResult = await roleManager.CreateAsync(
+                    new IdentityRole(role));
+
+                if (!roleResult.Succeeded)
+                {
+                    var errors = string.Join(
+                        ", ",
+                        roleResult.Errors.Select(e => e.Description));
+
+                    throw new InvalidOperationException(
+                        $"Could not create role '{role}': {errors}");
+                }
+            }
+        }
+
+        // =========================================================
+        // Create default admin account
+        // =========================================================
+
         const string email = "admin@cardiacapi.com";
         const string password = "Admin@12345";
 
-        // Create the default admin account if it doesn't already exist
         var existingUser =
             await userManager.FindByEmailAsync(email);
 
@@ -34,21 +68,40 @@ public static class SeedData
             {
                 var errors = string.Join(
                     ", ",
-                    result.Errors.Select(
-                        error => error.Description));
+                    result.Errors.Select(e => e.Description));
 
                 throw new InvalidOperationException(
                     $"Could not create seed user: {errors}");
             }
+
+            await userManager.AddToRoleAsync(user, "Admin");
+        }
+        else
+        {
+            // Make sure the existing admin has the Admin role
+            if (!await userManager.IsInRoleAsync(
+                    existingUser,
+                    "Admin"))
+            {
+                await userManager.AddToRoleAsync(
+                    existingUser,
+                    "Admin");
+            }
         }
 
-        // Don't add the sample data again if patients already exist
+        // =========================================================
+        // Don't add sample data again if patients already exist
+        // =========================================================
+
         if (await context.Patients.AnyAsync())
         {
             return;
         }
 
-        // Add some sample patients for testing the API
+        // =========================================================
+        // Sample patients
+        // =========================================================
+
         var patients = new List<Patient>
         {
             new()
@@ -82,7 +135,10 @@ public static class SeedData
         await context.Patients.AddRangeAsync(patients);
         await context.SaveChangesAsync();
 
-        // Add sample vital signs for the patients
+        // =========================================================
+        // Sample vital signs
+        // =========================================================
+
         var vitalSigns = new List<VitalSign>
         {
             new()
@@ -119,7 +175,10 @@ public static class SeedData
             }
         };
 
-        // Add sample medications
+        // =========================================================
+        // Sample medications
+        // =========================================================
+
         var medications = new List<Medication>
         {
             new()
@@ -153,7 +212,10 @@ public static class SeedData
             }
         };
 
-        // Add sample appointments
+        // =========================================================
+        // Sample appointments
+        // =========================================================
+
         var appointments = new List<Appointment>
         {
             new()
@@ -185,7 +247,6 @@ public static class SeedData
             }
         };
 
-        // Save all the sample data
         await context.VitalSigns.AddRangeAsync(vitalSigns);
         await context.Medications.AddRangeAsync(medications);
         await context.Appointments.AddRangeAsync(appointments);
