@@ -1,3 +1,4 @@
+
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.DTOs.VitalSign;
@@ -48,7 +49,6 @@ public class VitalSignsController : ControllerBase
     public async Task<ActionResult<IEnumerable<VitalSignResponseDto>>> GetPatientVitalSigns(
         int patientId)
     {
-        // Check that the patient exists first
         var patientExists = await _context.Patients
             .AsNoTracking()
             .AnyAsync(patient => patient.Id == patientId);
@@ -117,7 +117,6 @@ public class VitalSignsController : ControllerBase
     public async Task<ActionResult<VitalSignResponseDto>> CreateVitalSign(
         VitalSignCreateDto dto)
     {
-        // Make sure the patient exists before adding the record
         var patientExists = await _context.Patients
             .AnyAsync(patient => patient.Id == dto.PatientId);
 
@@ -136,7 +135,7 @@ public class VitalSignsController : ControllerBase
             SystolicPressure = dto.SystolicPressure,
             DiastolicPressure = dto.DiastolicPressure,
             OxygenSaturation = dto.OxygenSaturation,
-            RecordedAt = dto.RecordedAt,
+            RecordedAt = dto.RecordedAt!.Value,
             Notes = dto.Notes
         };
 
@@ -155,7 +154,6 @@ public class VitalSignsController : ControllerBase
             Notes = vitalSign.Notes
         };
 
-        // Return the new record with its generated ID
         return CreatedAtAction(
             nameof(GetVitalSign),
             new { id = vitalSign.Id },
@@ -225,3 +223,4 @@ public class VitalSignsController : ControllerBase
         return NoContent();
     }
 }
+

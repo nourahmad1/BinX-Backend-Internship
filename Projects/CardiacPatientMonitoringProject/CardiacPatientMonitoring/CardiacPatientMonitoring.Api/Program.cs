@@ -13,19 +13,31 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add controller support
+// =========================================================
+// Controllers
+// =========================================================
+
 builder.Services.AddControllers();
 
-// Register FluentValidation for request validation
+// =========================================================
+// FluentValidation
+// =========================================================
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 
-// Connect the API to the SQL Server database
+// =========================================================
+// Database
+// =========================================================
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure ASP.NET Core Identity for user management
+// =========================================================
+// ASP.NET Core Identity
+// =========================================================
+
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
@@ -36,23 +48,35 @@ builder.Services
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequiredLength = 6;
 
-        // Each user must have a unique email
+        // Email must be unique
         options.User.RequireUniqueEmail = true;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// Register the JWT service
+// =========================================================
+// JWT Service
+// =========================================================
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// Read JWT settings from appsettings.json
-var jwtSettings = builder.Configuration.GetSection("Jwt");
+// =========================================================
+// JWT Configuration
+// =========================================================
 
-var secretKey = jwtSettings["SecretKey"]
+var jwtSettings =
+    builder.Configuration.GetSection("Jwt");
+
+var secretKey =
+    jwtSettings["SecretKey"]
     ?? throw new InvalidOperationException(
         "JWT SecretKey is not configured.");
 
-// Configure JWT authentication
+// =========================================================
+// JWT Authentication
+// =========================================================
+
 builder.Services
     .AddAuthentication(options =>
     {
@@ -72,24 +96,33 @@ builder.Services
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
 
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
+                ValidIssuer =
+                    jwtSettings["Issuer"],
 
-                // Use the secret key to verify the token signature
+                ValidAudience =
+                    jwtSettings["Audience"],
+
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(secretKey))
             };
     });
 
+// =========================================================
+// Authorization
+// =========================================================
+
 builder.Services.AddAuthorization();
 
-// Configure Swagger
+// =========================================================
+// Swagger
+// =========================================================
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    // Add JWT authentication to Swagger
+    // JWT authentication in Swagger
     options.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -99,7 +132,8 @@ builder.Services.AddSwaggerGen(options =>
             Scheme = "bearer",
             BearerFormat = "JWT",
             In = ParameterLocation.Header,
-            Description = "Enter your JWT token."
+            Description =
+                "Enter your JWT token."
         });
 
     options.AddSecurityRequirement(document =>
@@ -111,29 +145,51 @@ builder.Services.AddSwaggerGen(options =>
         });
 });
 
+// =========================================================
+// Build Application
+// =========================================================
+
 var app = builder.Build();
 
-// Handle unexpected errors in one place
+// =========================================================
+// Global Exception Handling
+// =========================================================
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Enable Swagger only while developing the API
+// =========================================================
+// Swagger
+// =========================================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Redirect HTTP requests to HTTPS
+// =========================================================
+// HTTPS
+// =========================================================
+
 app.UseHttpsRedirection();
 
-// Authentication must run before authorization
+// =========================================================
+// Authentication & Authorization
+// =========================================================
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map controller endpoints
+// =========================================================
+// Controllers
+// =========================================================
+
 app.MapControllers();
 
-// Apply database migrations and add the initial sample data
+// =========================================================
+// Database Migration & Seed Data
+// =========================================================
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -144,11 +200,21 @@ using (var scope = app.Services.CreateScope())
     var userManager =
         services.GetRequiredService<UserManager<ApplicationUser>>();
 
+    var roleManager =
+        services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    // Apply pending migrations
     await dbContext.Database.MigrateAsync();
 
+    // Create roles, admin account, and sample data
     await SeedData.InitializeAsync(
         dbContext,
-        userManager);
+        userManager,
+        roleManager);
 }
+
+// =========================================================
+// Run Application
+// =========================================================
 
 app.Run();

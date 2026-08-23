@@ -80,11 +80,11 @@ public class PatientsController : ControllerBase
     {
         var patient = new Patient
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            DateOfBirth = dto.DateOfBirth,
-            Gender = dto.Gender,
-            PhoneNumber = dto.PhoneNumber,
+            FirstName = dto.FirstName.Trim(),
+            LastName = dto.LastName.Trim(),
+            DateOfBirth = dto.DateOfBirth!.Value,
+            Gender = dto.Gender.Trim(),
+            PhoneNumber = dto.PhoneNumber.Trim(),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -102,7 +102,6 @@ public class PatientsController : ControllerBase
             CreatedAt = patient.CreatedAt
         };
 
-        // Return the new patient with its generated ID
         return CreatedAtAction(
             nameof(GetPatient),
             new { id = patient.Id },
@@ -126,11 +125,11 @@ public class PatientsController : ControllerBase
             });
         }
 
-        patient.FirstName = dto.FirstName;
-        patient.LastName = dto.LastName;
-        patient.DateOfBirth = dto.DateOfBirth;
-        patient.Gender = dto.Gender;
-        patient.PhoneNumber = dto.PhoneNumber;
+        patient.FirstName = dto.FirstName.Trim();
+        patient.LastName = dto.LastName.Trim();
+        patient.DateOfBirth = dto.DateOfBirth!.Value;
+        patient.Gender = dto.Gender.Trim();
+        patient.PhoneNumber = dto.PhoneNumber.Trim();
 
         await _context.SaveChangesAsync();
 
@@ -170,4 +169,3 @@ public class PatientsController : ControllerBase
         return NoContent();
     }
 }
-

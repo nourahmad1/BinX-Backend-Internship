@@ -1,251 +1,187 @@
-using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
+using CardiacPatientMonitoring.Api.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CardiacPatientMonitoring.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class AppointmentsController : ControllerBase
+public class AuthController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IJwtService _jwtService;
 
-    public AppointmentsController(AppDbContext context)
+    public AuthController(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IJwtService jwtService)
     {
-        _context = context;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _jwtService = jwtService;
     }
 
-    // Get appointments with optional filters
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetAppointments(
-        [FromQuery] int? patientId,
-        [FromQuery] string? status,
-        [FromQuery] string? doctorName)
+    // =========================================================
+    // POST: api/Auth/register
+    // =========================================================
+
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<ActionResult<AuthResponseDto>> Register(
+        RegisterDto dto)
     {
-        var query = _context.Appointments
-            .AsNoTracking()
-            .AsQueryable();
+        // Check if the email is already registered
+        var existing =
+            await _userManager.FindByEmailAsync(dto.Email);
 
-        // Filter by patient
-        if (patientId.HasValue)
+        if (existing is not null)
         {
-            query = query.Where(a => a.PatientId == patientId.Value);
-        }
-
-        // Filter by appointment status
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            var normalizedStatus = status.Trim();
-
-            query = query.Where(a => a.Status == normalizedStatus);
-        }
-
-        // Filter by doctor name
-        if (!string.IsNullOrWhiteSpace(doctorName))
-        {
-            var normalizedDoctorName = doctorName.Trim();
-
-            query = query.Where(a =>
-                a.DoctorName.Contains(normalizedDoctorName));
-        }
-
-        // Show the latest appointments first
-        var appointments = await query
-            .OrderByDescending(a => a.AppointmentDate)
-            .Select(a => new AppointmentResponseDto
+            return Conflict(new
             {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
-            })
-            .ToListAsync();
-
-        return Ok(appointments);
-    }
-
-    // Get appointments for one patient
-    [HttpGet("patient/{patientId:int}")]
-    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetPatientAppointments(
-        int patientId)
-    {
-        // Make sure the patient exists before getting the appointments
-        var patientExists = await _context.Patients
-            .AsNoTracking()
-            .AnyAsync(p => p.Id == patientId);
-
-        if (!patientExists)
-        {
-            return NotFound(new
-            {
-                message = $"Patient with ID {patientId} was not found."
+                message =
+                    "An account with this email already exists."
             });
         }
 
-        var appointments = await _context.Appointments
-            .AsNoTracking()
-            .Where(a => a.PatientId == patientId)
-            .OrderByDescending(a => a.AppointmentDate)
-            .Select(a => new AppointmentResponseDto
-            {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
-            })
-            .ToListAsync();
+        // =====================================================
+        // Make sure the Doctor role exists
+        // =====================================================
 
-        return Ok(appointments);
-    }
+        const string roleName = "Doctor";
 
-    // Get a single appointment
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AppointmentResponseDto>> GetAppointment(int id)
-    {
-        var appointment = await _context.Appointments
-            .AsNoTracking()
-            .Where(a => a.Id == id)
-            .Select(a => new AppointmentResponseDto
-            {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
-            })
-            .FirstOrDefaultAsync();
-
-        if (appointment is null)
+        if (!await _roleManager.RoleExistsAsync(roleName))
         {
-            return NotFound(new
+            var roleResult =
+                await _roleManager.CreateAsync(
+                    new IdentityRole(roleName));
+
+            if (!roleResult.Succeeded)
             {
-                message = $"Appointment with ID {id} was not found."
-            });
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        message = "Could not create Doctor role.",
+                        errors = roleResult.Errors.Select(
+                            e => e.Description)
+                    });
+            }
         }
 
-        return Ok(appointment);
-    }
+        // =====================================================
+        // Create user
+        // =====================================================
 
-    // Create a new appointment
-    [HttpPost]
-    public async Task<ActionResult<AppointmentResponseDto>> CreateAppointment(
-        [FromBody] AppointmentCreateDto dto)
-    {
-        // Check that the patient exists
-        var patientExists = await _context.Patients
-            .AsNoTracking()
-            .AnyAsync(p => p.Id == dto.PatientId);
-
-        if (!patientExists)
+        var user = new ApplicationUser
         {
-            return NotFound(new
-            {
-                message = $"Patient with ID {dto.PatientId} was not found."
-            });
-        }
-
-        var appointment = new Appointment
-        {
-            PatientId = dto.PatientId,
-            AppointmentDate = dto.AppointmentDate,
-            DoctorName = dto.DoctorName.Trim(),
-            Reason = dto.Reason.Trim(),
-            Status = dto.Status.Trim(),
-
-            // Store null if no notes were provided
-            Notes = string.IsNullOrWhiteSpace(dto.Notes)
-                ? null
-                : dto.Notes.Trim()
+            UserName = dto.Email,
+            Email = dto.Email,
+            FullName = dto.FullName,
+            EmailConfirmed = true
         };
 
-        await _context.Appointments.AddAsync(appointment);
-        await _context.SaveChangesAsync();
+        var result =
+            await _userManager.CreateAsync(
+                user,
+                dto.Password);
 
-        var response = ToDto(appointment);
-
-        // Return the created appointment
-        return CreatedAtAction(
-            nameof(GetAppointment),
-            new { id = appointment.Id },
-            response);
-    }
-
-    // Update an existing appointment
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<AppointmentResponseDto>> UpdateAppointment(
-        int id,
-        [FromBody] AppointmentUpdateDto dto)
-    {
-        var appointment = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        if (appointment is null)
+        if (!result.Succeeded)
         {
-            return NotFound(new
+            return BadRequest(new
             {
-                message = $"Appointment with ID {id} was not found."
+                message = "Registration failed.",
+                errors = result.Errors.Select(
+                    e => e.Description)
             });
         }
 
-        appointment.AppointmentDate = dto.AppointmentDate;
-        appointment.DoctorName = dto.DoctorName.Trim();
-        appointment.Reason = dto.Reason.Trim();
-        appointment.Status = dto.Status.Trim();
-        appointment.Notes = string.IsNullOrWhiteSpace(dto.Notes)
-            ? null
-            : dto.Notes.Trim();
+        // =====================================================
+        // Add user to Doctor role
+        // =====================================================
 
-        await _context.SaveChangesAsync();
+        var roleAssignmentResult =
+            await _userManager.AddToRoleAsync(
+                user,
+                roleName);
 
-        return Ok(ToDto(appointment));
+        if (!roleAssignmentResult.Succeeded)
+        {
+            // Remove the user if role assignment failed
+            await _userManager.DeleteAsync(user);
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new
+                {
+                    message =
+                        "User was created but could not be assigned to Doctor role.",
+                    errors =
+                        roleAssignmentResult.Errors.Select(
+                            e => e.Description)
+                });
+        }
+
+        // =====================================================
+        // Generate JWT
+        // =====================================================
+
+        return Ok(
+            _jwtService.GenerateToken(user));
     }
 
-    // Delete an appointment
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteAppointment(int id)
-    {
-        var appointment = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id);
+    // =========================================================
+    // POST: api/Auth/login
+    // =========================================================
 
-        if (appointment is null)
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthResponseDto>> Login(
+        LoginDto dto)
+    {
+        var user =
+            await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user is null ||
+            !await _userManager.CheckPasswordAsync(
+                user,
+                dto.Password))
         {
-            return NotFound(new
+            return Unauthorized(new
             {
-                message = $"Appointment with ID {id} was not found."
+                message = "Invalid email or password."
             });
         }
 
-        _context.Appointments.Remove(appointment);
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        return Ok(
+            _jwtService.GenerateToken(user));
     }
 
-    // Map the entity to the response DTO
-    private static AppointmentResponseDto ToDto(Appointment appointment)
+    // =========================================================
+    // GET: api/Auth/me
+    // =========================================================
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<object>> Me()
     {
-        return new AppointmentResponseDto
+        var user =
+            await _userManager.GetUserAsync(User);
+
+        if (user is null)
         {
-            Id = appointment.Id,
-            PatientId = appointment.PatientId,
-            AppointmentDate = appointment.AppointmentDate,
-            DoctorName = appointment.DoctorName,
-            Reason = appointment.Reason,
-            Status = appointment.Status,
-            Notes = appointment.Notes
-        };
+            return Unauthorized();
+        }
+
+        return Ok(new
+        {
+            user.Id,
+            user.Email,
+            user.FullName,
+            Roles = await _userManager.GetRolesAsync(user)
+        });
     }
 }

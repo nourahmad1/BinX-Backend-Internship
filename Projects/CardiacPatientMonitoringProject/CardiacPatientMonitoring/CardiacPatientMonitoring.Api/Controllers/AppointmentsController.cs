@@ -31,13 +31,11 @@ public class AppointmentsController : ControllerBase
             .AsNoTracking()
             .AsQueryable();
 
-        // Filter by patient if a patient ID was provided
         if (patientId.HasValue)
         {
             query = query.Where(a => a.PatientId == patientId.Value);
         }
 
-        // Filter by status
         if (!string.IsNullOrWhiteSpace(status))
         {
             var normalizedStatus = status.Trim();
@@ -45,7 +43,6 @@ public class AppointmentsController : ControllerBase
             query = query.Where(a => a.Status == normalizedStatus);
         }
 
-        // Search appointments by doctor name
         if (!string.IsNullOrWhiteSpace(doctorName))
         {
             var normalizedDoctorName = doctorName.Trim();
@@ -54,7 +51,6 @@ public class AppointmentsController : ControllerBase
                 a.DoctorName.Contains(normalizedDoctorName));
         }
 
-        // Newest appointments come first
         var appointments = await query
             .OrderByDescending(a => a.AppointmentDate)
             .Select(a => new AppointmentResponseDto
@@ -77,7 +73,6 @@ public class AppointmentsController : ControllerBase
     public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetPatientAppointments(
         int patientId)
     {
-        // Check first if the patient actually exists
         var patientExists = await _context.Patients
             .AsNoTracking()
             .AnyAsync(p => p.Id == patientId);
@@ -128,7 +123,6 @@ public class AppointmentsController : ControllerBase
             })
             .FirstOrDefaultAsync();
 
-        // If no appointment was found, return 404
         if (appointment is null)
         {
             return NotFound(new
@@ -145,7 +139,6 @@ public class AppointmentsController : ControllerBase
     public async Task<ActionResult<AppointmentResponseDto>> CreateAppointment(
         [FromBody] AppointmentCreateDto dto)
     {
-        // We don't want to create an appointment for a patient that doesn't exist
         var patientExists = await _context.Patients
             .AsNoTracking()
             .AnyAsync(p => p.Id == dto.PatientId);
@@ -161,12 +154,10 @@ public class AppointmentsController : ControllerBase
         var appointment = new Appointment
         {
             PatientId = dto.PatientId,
-            AppointmentDate = dto.AppointmentDate,
+            AppointmentDate = dto.AppointmentDate!.Value,
             DoctorName = dto.DoctorName.Trim(),
             Reason = dto.Reason.Trim(),
             Status = dto.Status.Trim(),
-
-            // Keep notes null when nothing was entered
             Notes = string.IsNullOrWhiteSpace(dto.Notes)
                 ? null
                 : dto.Notes.Trim()
@@ -177,7 +168,6 @@ public class AppointmentsController : ControllerBase
 
         var response = ToDto(appointment);
 
-        // Return the created appointment with its new ID
         return CreatedAtAction(
             nameof(GetAppointment),
             new { id = appointment.Id },
@@ -201,8 +191,7 @@ public class AppointmentsController : ControllerBase
             });
         }
 
-        // Update the appointment with the new values
-        appointment.AppointmentDate = dto.AppointmentDate;
+        appointment.AppointmentDate = dto.AppointmentDate!.Value;
         appointment.DoctorName = dto.DoctorName.Trim();
         appointment.Reason = dto.Reason.Trim();
         appointment.Status = dto.Status.Trim();
@@ -252,4 +241,3 @@ public class AppointmentsController : ControllerBase
         };
     }
 }
-

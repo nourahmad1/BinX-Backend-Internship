@@ -1,3 +1,4 @@
+
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -26,7 +27,6 @@ public class MedicationsController : ControllerBase
             int patientId,
             [FromQuery] string? search = null)
     {
-        // Check if the patient exists first
         var patientExists = await _context.Patients
             .AnyAsync(patient => patient.Id == patientId);
 
@@ -42,7 +42,6 @@ public class MedicationsController : ControllerBase
             .AsNoTracking()
             .Where(medication => medication.PatientId == patientId);
 
-        // Search by medication name, dosage, or frequency
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(medication =>
@@ -51,7 +50,6 @@ public class MedicationsController : ControllerBase
                 medication.Frequency.Contains(search));
         }
 
-        // Show the newest medications first
         var medications = await query
             .OrderByDescending(medication => medication.StartDate)
             .Select(medication => new MedicationResponseDto
@@ -107,7 +105,6 @@ public class MedicationsController : ControllerBase
     public async Task<ActionResult<MedicationResponseDto>>
         CreateMedication(MedicationCreateDto dto)
     {
-        // Make sure the patient exists before adding the medication
         var patientExists = await _context.Patients
             .AnyAsync(patient => patient.Id == dto.PatientId);
 
@@ -125,7 +122,7 @@ public class MedicationsController : ControllerBase
             Name = dto.Name,
             Dosage = dto.Dosage,
             Frequency = dto.Frequency,
-            StartDate = dto.StartDate,
+            StartDate = dto.StartDate!.Value,
             EndDate = dto.EndDate,
             Notes = dto.Notes
         };
@@ -145,7 +142,6 @@ public class MedicationsController : ControllerBase
             Notes = medication.Notes
         };
 
-        // Return the newly created medication
         return CreatedAtAction(
             nameof(GetMedication),
             new { id = medication.Id },
@@ -173,7 +169,7 @@ public class MedicationsController : ControllerBase
         medication.Name = dto.Name;
         medication.Dosage = dto.Dosage;
         medication.Frequency = dto.Frequency;
-        medication.StartDate = dto.StartDate;
+        medication.StartDate = dto.StartDate!.Value;
         medication.EndDate = dto.EndDate;
         medication.Notes = dto.Notes;
 
