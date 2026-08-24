@@ -18,4 +18,10 @@ public class RegisterDto
     [Required]
     [MinLength(6)]
     public string Password { get; set; } = string.Empty;
+
+    // Role assigned to the new account.
+    // Public registration allows Doctor or Patient.
+    // Admin accounts should be created separately.
+    [Required]
+    public string Role { get; set; } = "Patient";
 }

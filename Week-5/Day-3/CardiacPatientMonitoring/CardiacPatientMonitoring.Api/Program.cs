@@ -13,46 +13,74 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add controller support
+// =========================================================
+// Controllers
+// =========================================================
+
 builder.Services.AddControllers();
 
-// Register FluentValidation for request validation
+// =========================================================
+// FluentValidation
+// =========================================================
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 
-// Connect the API to the SQL Server database
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+// =========================================================
+// Database
+// =========================================================
+// Production / Development:
+// SQL Server is used here.
+//
+// Integration tests:
+// CustomWebApplicationFactory replaces this registration
+// with Entity Framework Core InMemory database.
+// =========================================================
 
-// Configure ASP.NET Core Identity for user management
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString(
+            "DefaultConnection"));
+});
+
+// =========================================================
+// ASP.NET Core Identity
+// =========================================================
+
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
-        // Password rules
         options.Password.RequireDigit = true;
         options.Password.RequireLowercase = true;
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequiredLength = 6;
 
-        // Each user must have a unique email
         options.User.RequireUniqueEmail = true;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// Register the JWT service
+// =========================================================
+// JWT Service
+// =========================================================
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// Read JWT settings from appsettings.json
-var jwtSettings = builder.Configuration.GetSection("Jwt");
+// =========================================================
+// JWT Configuration
+// =========================================================
 
-var secretKey = jwtSettings["SecretKey"]
+var jwtSettings =
+    builder.Configuration.GetSection("Jwt");
+
+var secretKey =
+    jwtSettings["SecretKey"]
     ?? throw new InvalidOperationException(
         "JWT SecretKey is not configured.");
 
-// Configure JWT authentication
 builder.Services
     .AddAuthentication(options =>
     {
@@ -72,24 +100,33 @@ builder.Services
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
 
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
+                ValidIssuer =
+                    jwtSettings["Issuer"],
 
-                // Use the secret key to verify the token signature
+                ValidAudience =
+                    jwtSettings["Audience"],
+
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(secretKey))
+                        Encoding.UTF8.GetBytes(
+                            secretKey))
             };
     });
 
+// =========================================================
+// Authorization
+// =========================================================
+
 builder.Services.AddAuthorization();
 
-// Configure Swagger
+// =========================================================
+// Swagger
+// =========================================================
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    // Add JWT authentication to Swagger
     options.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -111,44 +148,79 @@ builder.Services.AddSwaggerGen(options =>
         });
 });
 
+// =========================================================
+// Build application
+// =========================================================
+
 var app = builder.Build();
 
-// Handle unexpected errors in one place
+// =========================================================
+// Global Exception Handling
+// =========================================================
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Enable Swagger only while developing the API
+// =========================================================
+// Swagger
+// =========================================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Redirect HTTP requests to HTTPS
+// =========================================================
+// HTTPS
+// =========================================================
+
 app.UseHttpsRedirection();
 
-// Authentication must run before authorization
+// =========================================================
+// Authentication & Authorization
+// =========================================================
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map controller endpoints
+// =========================================================
+// Controllers
+// =========================================================
+
 app.MapControllers();
 
-// Apply database migrations and add the initial sample data
-using (var scope = app.Services.CreateScope())
+// =========================================================
+// Database initialization + seed
+// =========================================================
+// IMPORTANT:
+// Do NOT run migrations or normal production seed
+// during integration tests.
+// CustomWebApplicationFactory handles the test database.
+// =========================================================
+
+if (!app.Environment.IsEnvironment("Testing"))
 {
+    using var scope = app.Services.CreateScope();
+
     var services = scope.ServiceProvider;
 
     var dbContext =
         services.GetRequiredService<AppDbContext>();
 
     var userManager =
-        services.GetRequiredService<UserManager<ApplicationUser>>();
+        services.GetRequiredService<
+            UserManager<ApplicationUser>>();
+
+    var roleManager =
+        services.GetRequiredService<
+            RoleManager<IdentityRole>>();
 
     await dbContext.Database.MigrateAsync();
 
     await SeedData.InitializeAsync(
         dbContext,
-        userManager);
+        userManager,
+        roleManager);
 }
 
 app.Run();

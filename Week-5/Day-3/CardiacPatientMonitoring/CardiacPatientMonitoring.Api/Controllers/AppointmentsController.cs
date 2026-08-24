@@ -1,4 +1,3 @@
-
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -20,21 +19,28 @@ public class AppointmentsController : ControllerBase
         _context = context;
     }
 
-    // Get all appointments, with optional filters
+    // =========================================================
+    // GET: api/Appointments
+    // Admin, Doctor, and Patient can view appointments
+    // =========================================================
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetAppointments(
-        [FromQuery] int? patientId,
-        [FromQuery] string? status,
-        [FromQuery] string? doctorName)
+    [Authorize(Roles = "Admin,Doctor,Patient")]
+    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
+        GetAppointments(
+            [FromQuery] int? patientId,
+            [FromQuery] string? status,
+            [FromQuery] string? doctorName)
     {
         var query = _context.Appointments
             .AsNoTracking()
             .AsQueryable();
 
-        // Filter by patient if a patient ID was provided
+        // Filter by patient
         if (patientId.HasValue)
         {
-            query = query.Where(a => a.PatientId == patientId.Value);
+            query = query.Where(
+                appointment =>
+                    appointment.PatientId == patientId.Value);
         }
 
         // Filter by status
@@ -42,119 +48,147 @@ public class AppointmentsController : ControllerBase
         {
             var normalizedStatus = status.Trim();
 
-            query = query.Where(a => a.Status == normalizedStatus);
+            query = query.Where(
+                appointment =>
+                    appointment.Status == normalizedStatus);
         }
 
-        // Search appointments by doctor name
+        // Search by doctor name
         if (!string.IsNullOrWhiteSpace(doctorName))
         {
             var normalizedDoctorName = doctorName.Trim();
 
-            query = query.Where(a =>
-                a.DoctorName.Contains(normalizedDoctorName));
+            query = query.Where(
+                appointment =>
+                    appointment.DoctorName.Contains(
+                        normalizedDoctorName));
         }
 
-        // Newest appointments come first
+        // Newest appointments first
         var appointments = await query
-            .OrderByDescending(a => a.AppointmentDate)
-            .Select(a => new AppointmentResponseDto
+            .OrderByDescending(
+                appointment => appointment.AppointmentDate)
+            .Select(appointment => new AppointmentResponseDto
             {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .ToListAsync();
 
         return Ok(appointments);
     }
 
-    // Get all appointments for a specific patient
+    // =========================================================
+    // GET: api/Appointments/patient/{patientId}
+    // Admin, Doctor, and Patient can view patient appointments
+    // =========================================================
     [HttpGet("patient/{patientId:int}")]
-    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetPatientAppointments(
-        int patientId)
+    [Authorize(Roles = "Admin,Doctor,Patient")]
+    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
+        GetPatientAppointments(int patientId)
     {
-        // Check first if the patient actually exists
+        // Check if patient exists
         var patientExists = await _context.Patients
             .AsNoTracking()
-            .AnyAsync(p => p.Id == patientId);
+            .AnyAsync(
+                patient => patient.Id == patientId);
 
         if (!patientExists)
         {
             return NotFound(new
             {
-                message = $"Patient with ID {patientId} was not found."
+                message =
+                    $"Patient with ID {patientId} was not found."
             });
         }
 
         var appointments = await _context.Appointments
             .AsNoTracking()
-            .Where(a => a.PatientId == patientId)
-            .OrderByDescending(a => a.AppointmentDate)
-            .Select(a => new AppointmentResponseDto
+            .Where(
+                appointment =>
+                    appointment.PatientId == patientId)
+            .OrderByDescending(
+                appointment => appointment.AppointmentDate)
+            .Select(appointment => new AppointmentResponseDto
             {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .ToListAsync();
 
         return Ok(appointments);
     }
 
-    // Get one appointment by its ID
+    // =========================================================
+    // GET: api/Appointments/{id}
+    // Admin, Doctor, and Patient can view one appointment
+    // =========================================================
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<AppointmentResponseDto>> GetAppointment(int id)
+    [Authorize(Roles = "Admin,Doctor,Patient")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        GetAppointment(int id)
     {
         var appointment = await _context.Appointments
             .AsNoTracking()
-            .Where(a => a.Id == id)
-            .Select(a => new AppointmentResponseDto
+            .Where(
+                appointment =>
+                    appointment.Id == id)
+            .Select(appointment => new AppointmentResponseDto
             {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                AppointmentDate = a.AppointmentDate,
-                DoctorName = a.DoctorName,
-                Reason = a.Reason,
-                Status = a.Status,
-                Notes = a.Notes
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .FirstOrDefaultAsync();
 
-        // If no appointment was found, return 404
         if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Appointment with ID {id} was not found."
+                message =
+                    $"Appointment with ID {id} was not found."
             });
         }
 
         return Ok(appointment);
     }
 
-    // Create a new appointment
+    // =========================================================
+    // POST: api/Appointments
+    // Only Admin and Doctor can create appointments
+    // =========================================================
     [HttpPost]
-    public async Task<ActionResult<AppointmentResponseDto>> CreateAppointment(
-        [FromBody] AppointmentCreateDto dto)
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        CreateAppointment(
+            [FromBody] AppointmentCreateDto dto)
     {
-        // We don't want to create an appointment for a patient that doesn't exist
+        // Make sure the patient exists
         var patientExists = await _context.Patients
             .AsNoTracking()
-            .AnyAsync(p => p.Id == dto.PatientId);
+            .AnyAsync(
+                patient => patient.Id == dto.PatientId);
 
         if (!patientExists)
         {
             return NotFound(new
             {
-                message = $"Patient with ID {dto.PatientId} was not found."
+                message =
+                    $"Patient with ID {dto.PatientId} was not found."
             });
         }
 
@@ -166,67 +200,90 @@ public class AppointmentsController : ControllerBase
             Reason = dto.Reason.Trim(),
             Status = dto.Status.Trim(),
 
-            // Keep notes null when nothing was entered
             Notes = string.IsNullOrWhiteSpace(dto.Notes)
                 ? null
                 : dto.Notes.Trim()
         };
 
         await _context.Appointments.AddAsync(appointment);
+
         await _context.SaveChangesAsync();
 
         var response = ToDto(appointment);
 
-        // Return the created appointment with its new ID
         return CreatedAtAction(
             nameof(GetAppointment),
             new { id = appointment.Id },
             response);
     }
 
-    // Update an existing appointment
+    // =========================================================
+    // PUT: api/Appointments/{id}
+    // Only Admin and Doctor can update appointments
+    // =========================================================
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<AppointmentResponseDto>> UpdateAppointment(
-        int id,
-        [FromBody] AppointmentUpdateDto dto)
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<ActionResult<AppointmentResponseDto>>
+        UpdateAppointment(
+            int id,
+            [FromBody] AppointmentUpdateDto dto)
     {
         var appointment = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id);
+            .FirstOrDefaultAsync(
+                appointment =>
+                    appointment.Id == id);
 
         if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Appointment with ID {id} was not found."
+                message =
+                    $"Appointment with ID {id} was not found."
             });
         }
 
-        // Update the appointment with the new values
-        appointment.AppointmentDate = dto.AppointmentDate;
-        appointment.DoctorName = dto.DoctorName.Trim();
-        appointment.Reason = dto.Reason.Trim();
-        appointment.Status = dto.Status.Trim();
-        appointment.Notes = string.IsNullOrWhiteSpace(dto.Notes)
-            ? null
-            : dto.Notes.Trim();
+        appointment.AppointmentDate =
+            dto.AppointmentDate;
+
+        appointment.DoctorName =
+            dto.DoctorName.Trim();
+
+        appointment.Reason =
+            dto.Reason.Trim();
+
+        appointment.Status =
+            dto.Status.Trim();
+
+        appointment.Notes =
+            string.IsNullOrWhiteSpace(dto.Notes)
+                ? null
+                : dto.Notes.Trim();
 
         await _context.SaveChangesAsync();
 
         return Ok(ToDto(appointment));
     }
 
-    // Delete an appointment by ID
+    // =========================================================
+    // DELETE: api/Appointments/{id}
+    // Only Admin and Doctor can delete appointments
+    // =========================================================
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteAppointment(int id)
+    [Authorize(Roles = "Admin,Doctor")]
+    public async Task<IActionResult>
+        DeleteAppointment(int id)
     {
         var appointment = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id);
+            .FirstOrDefaultAsync(
+                appointment =>
+                    appointment.Id == id);
 
         if (appointment is null)
         {
             return NotFound(new
             {
-                message = $"Appointment with ID {id} was not found."
+                message =
+                    $"Appointment with ID {id} was not found."
             });
         }
 
@@ -237,8 +294,11 @@ public class AppointmentsController : ControllerBase
         return NoContent();
     }
 
-    // Convert the entity to the DTO we return from the API
-    private static AppointmentResponseDto ToDto(Appointment appointment)
+    // =========================================================
+    // Helper method
+    // =========================================================
+    private static AppointmentResponseDto ToDto(
+        Appointment appointment)
     {
         return new AppointmentResponseDto
         {
@@ -252,4 +312,3 @@ public class AppointmentsController : ControllerBase
         };
     }
 }
-

@@ -1,27 +1,40 @@
+
 using CardiacPatientMonitoring.Api.Controllers;
+using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
 using CardiacPatientMonitoring.Api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace CardiacPatientMonitoring.Tests;
 
 public class AuthControllerTests
 {
-    // Use a fake JWT service so these tests focus on the controller logic.
+    // Fake JWT service.
     private readonly Mock<IJwtService> _jwtServiceMock = new();
 
-    // A new user should be registered successfully.
-    [Fact]
-    public async Task Register_ShouldReturnOk_WhenUserIsCreated()
+    // Create a fresh in-memory database for each test.
+    private static AppDbContext CreateContext()
     {
-        // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
+        return new AppDbContext(options);
+    }
+
+    // Create a mocked UserManager.
+    private static Mock<UserManager<ApplicationUser>>
+        CreateUserManagerMock()
+    {
+        var store =
+            new Mock<IUserStore<ApplicationUser>>();
+
+        return new Mock<UserManager<ApplicationUser>>(
             store.Object,
             null!,
             null!,
@@ -31,14 +44,19 @@ public class AuthControllerTests
             null!,
             null!,
             null!);
+    }
 
-        var user = new ApplicationUser
-        {
-            Id = "user-1",
-            Email = "test@example.com",
-            UserName = "test@example.com",
-            FullName = "Test User"
-        };
+    // =========================================================
+    // REGISTER
+    // =========================================================
+
+    [Fact]
+    public async Task Register_ShouldReturnOk_WhenUserIsCreated()
+    {
+        // Arrange
+        await using var context = CreateContext();
+
+        var userManager = CreateUserManagerMock();
 
         userManager
             .Setup(x => x.FindByEmailAsync("test@example.com"))
@@ -56,8 +74,18 @@ public class AuthControllerTests
                 "Doctor"))
             .ReturnsAsync(IdentityResult.Success);
 
+        userManager
+            .Setup(x => x.GetRolesAsync(
+                It.IsAny<ApplicationUser>()))
+            .ReturnsAsync(new List<string>
+            {
+                "Doctor"
+            });
+
         _jwtServiceMock
-            .Setup(x => x.GenerateToken(It.IsAny<ApplicationUser>()))
+            .Setup(x => x.GenerateToken(
+                It.IsAny<ApplicationUser>(),
+                It.IsAny<IList<string>>()))
             .Returns(new AuthTokenResult
             {
                 Token = "fake-jwt-token",
@@ -66,41 +94,52 @@ public class AuthControllerTests
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
         var dto = new RegisterDto
         {
             Email = "test@example.com",
             FullName = "Test User",
-            Password = "Password123!"
+            Password = "Password123!",
+            Role = "Doctor"
         };
 
         // Act
         var result = await controller.Register(dto);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult =
+            Assert.IsType<OkObjectResult>(result.Result);
 
         Assert.IsType<AuthTokenResult>(okResult.Value);
+
+        userManager.Verify(
+            x => x.AddToRoleAsync(
+                It.IsAny<ApplicationUser>(),
+                "Doctor"),
+            Times.Once);
+
+        userManager.Verify(
+            x => x.GetRolesAsync(
+                It.IsAny<ApplicationUser>()),
+            Times.Once);
+
+        _jwtServiceMock.Verify(
+            x => x.GenerateToken(
+                It.IsAny<ApplicationUser>(),
+                It.Is<IList<string>>(
+                    roles => roles.Contains("Doctor"))),
+            Times.Once);
     }
 
-    // Registration should fail when the email is already registered.
     [Fact]
     public async Task Register_ShouldReturnConflict_WhenEmailAlreadyExists()
     {
         // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        await using var context = CreateContext();
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
-            store.Object,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+        var userManager = CreateUserManagerMock();
 
         var existingUser = new ApplicationUser
         {
@@ -115,39 +154,80 @@ public class AuthControllerTests
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
         var dto = new RegisterDto
         {
             Email = "test@example.com",
             FullName = "Test User",
-            Password = "Password123!"
+            Password = "Password123!",
+            Role = "Doctor"
         };
 
         // Act
         var result = await controller.Register(dto);
 
         // Assert
-        Assert.IsType<ConflictObjectResult>(result.Result);
+        Assert.IsType<ConflictObjectResult>(
+            result.Result);
+
+        userManager.Verify(
+            x => x.CreateAsync(
+                It.IsAny<ApplicationUser>(),
+                It.IsAny<string>()),
+            Times.Never);
     }
 
-    // Login should return a JWT token when the credentials are correct.
+    [Fact]
+    public async Task Register_ShouldReturnBadRequest_WhenRoleIsInvalid()
+    {
+        // Arrange
+        await using var context = CreateContext();
+
+        var userManager = CreateUserManagerMock();
+
+        var controller = new AuthController(
+            userManager.Object,
+            _jwtServiceMock.Object,
+            context);
+
+        var dto = new RegisterDto
+        {
+            Email = "test@example.com",
+            FullName = "Test User",
+            Password = "Password123!",
+            Role = "Admin"
+        };
+
+        // Act
+        var result = await controller.Register(dto);
+
+        // Assert
+        var badRequest =
+            Assert.IsType<BadRequestObjectResult>(
+                result.Result);
+
+        Assert.NotNull(badRequest.Value);
+
+        userManager.Verify(
+            x => x.CreateAsync(
+                It.IsAny<ApplicationUser>(),
+                It.IsAny<string>()),
+            Times.Never);
+    }
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+
     [Fact]
     public async Task Login_ShouldReturnOk_WhenCredentialsAreValid()
     {
         // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        await using var context = CreateContext();
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
-            store.Object,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+        var userManager = CreateUserManagerMock();
 
         var user = new ApplicationUser
         {
@@ -162,11 +242,22 @@ public class AuthControllerTests
             .ReturnsAsync(user);
 
         userManager
-            .Setup(x => x.CheckPasswordAsync(user, "Password123!"))
+            .Setup(x => x.CheckPasswordAsync(
+                user,
+                "Password123!"))
             .ReturnsAsync(true);
 
+        userManager
+            .Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string>
+            {
+                "Doctor"
+            });
+
         _jwtServiceMock
-            .Setup(x => x.GenerateToken(user))
+            .Setup(x => x.GenerateToken(
+                user,
+                It.IsAny<IList<string>>()))
             .Returns(new AuthTokenResult
             {
                 Token = "fake-jwt-token",
@@ -175,7 +266,8 @@ public class AuthControllerTests
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
         var dto = new LoginDto
         {
@@ -187,30 +279,36 @@ public class AuthControllerTests
         var result = await controller.Login(dto);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult =
+            Assert.IsType<OkObjectResult>(result.Result);
 
-        var tokenResult = Assert.IsType<AuthTokenResult>(okResult.Value);
+        var tokenResult =
+            Assert.IsType<AuthTokenResult>(
+                okResult.Value);
 
-        Assert.Equal("fake-jwt-token", tokenResult.Token);
+        Assert.Equal(
+            "fake-jwt-token",
+            tokenResult.Token);
+
+        userManager.Verify(
+            x => x.GetRolesAsync(user),
+            Times.Once);
+
+        _jwtServiceMock.Verify(
+            x => x.GenerateToken(
+                user,
+                It.Is<IList<string>>(
+                    roles => roles.Contains("Doctor"))),
+            Times.Once);
     }
 
-    // Login should return 401 when the password is incorrect.
     [Fact]
     public async Task Login_ShouldReturnUnauthorized_WhenCredentialsAreInvalid()
     {
         // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        await using var context = CreateContext();
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
-            store.Object,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+        var userManager = CreateUserManagerMock();
 
         var user = new ApplicationUser
         {
@@ -224,12 +322,15 @@ public class AuthControllerTests
             .ReturnsAsync(user);
 
         userManager
-            .Setup(x => x.CheckPasswordAsync(user, "WrongPassword"))
+            .Setup(x => x.CheckPasswordAsync(
+                user,
+                "WrongPassword"))
             .ReturnsAsync(false);
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
         var dto = new LoginDto
         {
@@ -241,31 +342,32 @@ public class AuthControllerTests
         var result = await controller.Login(dto);
 
         // Assert
-        Assert.IsType<UnauthorizedObjectResult>(result.Result);
+        Assert.IsType<UnauthorizedObjectResult>(
+            result.Result);
 
-        // No token should be generated when login fails.
+        userManager.Verify(
+            x => x.GetRolesAsync(
+                It.IsAny<ApplicationUser>()),
+            Times.Never);
+
         _jwtServiceMock.Verify(
-            x => x.GenerateToken(It.IsAny<ApplicationUser>()),
+            x => x.GenerateToken(
+                It.IsAny<ApplicationUser>(),
+                It.IsAny<IList<string>>()),
             Times.Never);
     }
 
-    // Me should return the current user's information when the user exists.
+    // =========================================================
+    // ME
+    // =========================================================
+
     [Fact]
     public async Task Me_ShouldReturnUserInformation_WhenUserIsAuthenticated()
     {
         // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        await using var context = CreateContext();
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
-            store.Object,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+        var userManager = CreateUserManagerMock();
 
         var user = new ApplicationUser
         {
@@ -282,13 +384,16 @@ public class AuthControllerTests
 
         userManager
             .Setup(x => x.GetRolesAsync(user))
-            .ReturnsAsync(new List<string> { "Doctor" });
+            .ReturnsAsync(new List<string>
+            {
+                "Doctor"
+            });
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
-        // Simulate an authenticated request.
         var claims = new[]
         {
             new System.Security.Claims.Claim(
@@ -296,51 +401,45 @@ public class AuthControllerTests
                 user.Id)
         };
 
-        var identity = new System.Security.Claims.ClaimsIdentity(
-            claims,
-            "TestAuthentication");
+        var identity =
+            new System.Security.Claims.ClaimsIdentity(
+                claims,
+                "TestAuthentication");
 
-        controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext
+        controller.ControllerContext =
+            new ControllerContext
             {
-                User = new System.Security.Claims.ClaimsPrincipal(identity)
-            }
-        };
+                HttpContext = new DefaultHttpContext
+                {
+                    User =
+                        new System.Security.Claims.ClaimsPrincipal(
+                            identity)
+                }
+            };
 
         // Act
         var result = await controller.Me();
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult =
+            Assert.IsType<OkObjectResult>(
+                result.Result);
 
         Assert.NotNull(okResult.Value);
 
-        // Make sure the controller also loads the user's roles.
         userManager.Verify(
             x => x.GetRolesAsync(user),
             Times.Once);
     }
 
-    // Me should return 401 when the user cannot be found.
     [Fact]
     public async Task Me_ShouldReturnUnauthorized_WhenUserDoesNotExist()
     {
         // Arrange
-        var store = new Mock<IUserStore<ApplicationUser>>();
+        await using var context = CreateContext();
 
-        var userManager = new Mock<UserManager<ApplicationUser>>(
-            store.Object,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+        var userManager = CreateUserManagerMock();
 
-        // Simulate an authenticated request where the user no longer exists.
         userManager
             .Setup(x => x.GetUserAsync(
                 It.IsAny<System.Security.Claims.ClaimsPrincipal>()))
@@ -348,12 +447,19 @@ public class AuthControllerTests
 
         var controller = new AuthController(
             userManager.Object,
-            _jwtServiceMock.Object);
+            _jwtServiceMock.Object,
+            context);
 
         // Act
         var result = await controller.Me();
 
         // Assert
-        Assert.IsType<UnauthorizedResult>(result.Result);
+        Assert.IsType<UnauthorizedResult>(
+            result.Result);
+
+        userManager.Verify(
+            x => x.GetRolesAsync(
+                It.IsAny<ApplicationUser>()),
+            Times.Never);
     }
 }

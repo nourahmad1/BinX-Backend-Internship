@@ -5,6 +5,9 @@ public class Patient
     // Patient ID
     public int Id { get; set; }
 
+    // Link this patient record to an Identity user
+    public string? ApplicationUserId { get; set; }
+
     // Patient's first name
     public string FirstName { get; set; } = string.Empty;
 
@@ -22,6 +25,9 @@ public class Patient
 
     // Date when the patient was added
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Navigation property to the Identity user
+    public ApplicationUser? ApplicationUser { get; set; }
 
     // Vital sign records for this patient
     public ICollection<VitalSign> VitalSigns { get; set; }
