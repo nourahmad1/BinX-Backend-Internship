@@ -21,11 +21,11 @@ public class AppointmentsController : ControllerBase
 
     // =========================================================
     // GET: api/Appointments
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>> GetAppointments(
         [FromQuery] int? patientId,
         [FromQuery] string? status,
@@ -78,11 +78,11 @@ public class AppointmentsController : ControllerBase
 
     // =========================================================
     // GET: api/Appointments/patient/{patientId}
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet("patient/{patientId:int}")]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
         GetPatientAppointments(int patientId)
     {
@@ -121,11 +121,11 @@ public class AppointmentsController : ControllerBase
 
     // =========================================================
     // GET: api/Appointments/{id}
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<AppointmentResponseDto>>
         GetAppointment(int id)
     {

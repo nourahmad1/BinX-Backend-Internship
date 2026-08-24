@@ -1,8 +1,8 @@
-
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +14,22 @@ namespace CardiacPatientMonitoring.Api.Controllers;
 public class PatientsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public PatientsController(AppDbContext context)
+    public PatientsController(
+        AppDbContext context,
+        UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
-    // Get all patients
+    // =========================================================
+    // GET: api/Patients
+    // Admin and Doctor can view all patients
+    // =========================================================
     [HttpGet]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<PatientResponseDto>>> GetPatients()
     {
         var patients = await _context.Patients
@@ -43,8 +51,56 @@ public class PatientsController : ControllerBase
         return Ok(patients);
     }
 
-    // Get one patient by ID
+    // =========================================================
+    // GET: api/Patients/me
+    // Patient can view their own patient profile
+    // =========================================================
+    [HttpGet("me")]
+    [Authorize(Roles = "Patient")]
+    public async Task<ActionResult<PatientResponseDto>> GetMyPatientProfile()
+    {
+        // Get the currently authenticated Identity user
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        // Find the Patient record linked to this Identity user
+        var patient = await _context.Patients
+            .AsNoTracking()
+            .Where(patient =>
+                patient.ApplicationUserId == user.Id)
+            .Select(patient => new PatientResponseDto
+            {
+                Id = patient.Id,
+                FirstName = patient.FirstName,
+                LastName = patient.LastName,
+                DateOfBirth = patient.DateOfBirth,
+                Gender = patient.Gender,
+                PhoneNumber = patient.PhoneNumber,
+                CreatedAt = patient.CreatedAt
+            })
+            .FirstOrDefaultAsync();
+
+        if (patient is null)
+        {
+            return NotFound(new
+            {
+                message = "No patient profile is linked to your account."
+            });
+        }
+
+        return Ok(patient);
+    }
+
+    // =========================================================
+    // GET: api/Patients/{id}
+    // Admin and Doctor can get any patient
+    // =========================================================
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> GetPatient(int id)
     {
         var patient = await _context.Patients
@@ -73,8 +129,12 @@ public class PatientsController : ControllerBase
         return Ok(patient);
     }
 
-    // Create a new patient
+    // =========================================================
+    // POST: api/Patients
+    // Admin and Doctor can create patient records
+    // =========================================================
     [HttpPost]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> CreatePatient(
         PatientCreateDto dto)
     {
@@ -102,15 +162,18 @@ public class PatientsController : ControllerBase
             CreatedAt = patient.CreatedAt
         };
 
-        // Return the new patient with its generated ID
         return CreatedAtAction(
             nameof(GetPatient),
             new { id = patient.Id },
             response);
     }
 
-    // Update an existing patient
+    // =========================================================
+    // PUT: api/Patients/{id}
+    // Admin and Doctor can update patients
+    // =========================================================
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> UpdatePatient(
         int id,
         PatientUpdateDto dto)
@@ -148,8 +211,12 @@ public class PatientsController : ControllerBase
         return Ok(response);
     }
 
-    // Delete an existing patient
+    // =========================================================
+    // DELETE: api/Patients/{id}
+    // Only Admin can delete patients
+    // =========================================================
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePatient(int id)
     {
         var patient = await _context.Patients
@@ -170,4 +237,3 @@ public class PatientsController : ControllerBase
         return NoContent();
     }
 }
-

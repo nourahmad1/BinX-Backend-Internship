@@ -1,7 +1,6 @@
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
 using CardiacPatientMonitoring.Api.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,76 +11,41 @@ namespace CardiacPatientMonitoring.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtService _jwtService;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager,
         IJwtService jwtService)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _jwtService = jwtService;
     }
 
     // =========================================================
-    // POST: api/Auth/register
+    // Register
     // =========================================================
 
-    [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<ActionResult<AuthResponseDto>> Register(
+    public async Task<IActionResult> Register(
         RegisterDto dto)
     {
-        // Check if the email is already registered
-        var existing =
+        // Check if email already exists
+        var existingUser =
             await _userManager.FindByEmailAsync(dto.Email);
 
-        if (existing is not null)
+        if (existingUser != null)
         {
-            return Conflict(new
+            return BadRequest(new
             {
-                message =
-                    "An account with this email already exists."
+                message = "Email is already registered."
             });
         }
 
-        // =====================================================
-        // Make sure the Doctor role exists
-        // =====================================================
-
-        const string roleName = "Doctor";
-
-        if (!await _roleManager.RoleExistsAsync(roleName))
-        {
-            var roleResult =
-                await _roleManager.CreateAsync(
-                    new IdentityRole(roleName));
-
-            if (!roleResult.Succeeded)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    new
-                    {
-                        message = "Could not create Doctor role.",
-                        errors = roleResult.Errors.Select(
-                            e => e.Description)
-                    });
-            }
-        }
-
-        // =====================================================
         // Create user
-        // =====================================================
-
         var user = new ApplicationUser
         {
             UserName = dto.Email,
-            Email = dto.Email,
-            FullName = dto.FullName,
-            EmailConfirmed = true
+            Email = dto.Email
         };
 
         var result =
@@ -100,64 +64,32 @@ public class AuthController : ControllerBase
         }
 
         // =====================================================
-        // Add user to Doctor role
+        // Assign default Patient role
         // =====================================================
 
-        var roleAssignmentResult =
-            await _userManager.AddToRoleAsync(
-                user,
-                roleName);
+        await _userManager.AddToRoleAsync(
+            user,
+            "Patient");
 
-        if (!roleAssignmentResult.Succeeded)
+        return Ok(new
         {
-            // Remove the user if role assignment failed
-            await _userManager.DeleteAsync(user);
-
-            return StatusCode(
-                StatusCodes.Status500InternalServerError,
-                new
-                {
-                    message =
-                        "User was created but could not be assigned to Doctor role.",
-
-                    errors =
-                        roleAssignmentResult.Errors.Select(
-                            e => e.Description)
-                });
-        }
-
-        // =====================================================
-        // Generate JWT with role claims
-        // =====================================================
-
-        var token =
-            await _jwtService.GenerateTokenAsync(user);
-
-        return Ok(new AuthResponseDto
-        {
-            Token = token.Token,
-            ExpiresAt = token.ExpiresAt,
-            Email = user.Email ?? string.Empty,
-            FullName = user.FullName
+            message = "Registration successful."
         });
     }
 
     // =========================================================
-    // POST: api/Auth/login
+    // Login
     // =========================================================
 
-    [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult<AuthResponseDto>> Login(
+    public async Task<IActionResult> Login(
         LoginDto dto)
     {
+        // Find user
         var user =
             await _userManager.FindByEmailAsync(dto.Email);
 
-        if (user is null ||
-            !await _userManager.CheckPasswordAsync(
-                user,
-                dto.Password))
+        if (user == null)
         {
             return Unauthorized(new
             {
@@ -165,44 +97,49 @@ public class AuthController : ControllerBase
             });
         }
 
-        // Generate JWT with the user's roles
-        var token =
+        // Check password
+        var passwordValid =
+            await _userManager.CheckPasswordAsync(
+                user,
+                dto.Password);
+
+        if (!passwordValid)
+        {
+            return Unauthorized(new
+            {
+                message = "Invalid email or password."
+            });
+        }
+
+        // =====================================================
+        // Generate JWT
+        // =====================================================
+
+        var tokenResult =
             await _jwtService.GenerateTokenAsync(user);
 
-        return Ok(new AuthResponseDto
-        {
-            Token = token.Token,
-            ExpiresAt = token.ExpiresAt,
-            Email = user.Email ?? string.Empty,
-            FullName = user.FullName
-        });
-    }
-
-    // =========================================================
-    // GET: api/Auth/me
-    // =========================================================
-
-    [Authorize]
-    [HttpGet("me")]
-    public async Task<ActionResult<object>> Me()
-    {
-        var user =
-            await _userManager.GetUserAsync(User);
-
-        if (user is null)
-        {
-            return Unauthorized();
-        }
+        // =====================================================
+        // Get User Roles
+        // =====================================================
 
         var roles =
             await _userManager.GetRolesAsync(user);
 
+        // =====================================================
+        // Return Login Response
+        // =====================================================
+
         return Ok(new
         {
-            user.Id,
-            user.Email,
-            user.FullName,
-            Roles = roles
+            message = "Login successful.",
+            token = tokenResult.Token,
+            expiresAt = tokenResult.ExpiresAt,
+            user = new
+            {
+                id = user.Id,
+                email = user.Email,
+                roles = roles
+            }
         });
     }
 }

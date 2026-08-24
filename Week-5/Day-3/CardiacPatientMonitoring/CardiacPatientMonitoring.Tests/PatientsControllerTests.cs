@@ -1,16 +1,18 @@
+
 using CardiacPatientMonitoring.Api.Controllers;
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace CardiacPatientMonitoring.Tests;
 
 public class PatientsControllerTests
 {
     // Creates a fresh in-memory database for each test.
-    // This keeps the tests independent from each other.
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -20,7 +22,27 @@ public class PatientsControllerTests
         return new AppDbContext(options);
     }
 
-    // GetPatients should return all patients from the database.
+    // Creates a mocked UserManager for unit tests.
+    private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
+    {
+        var store = new Mock<IUserStore<ApplicationUser>>();
+
+        return new Mock<UserManager<ApplicationUser>>(
+            store.Object,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!);
+    }
+
+    // =========================================================
+    // GetPatients
+    // =========================================================
+
     [Fact]
     public async Task GetPatients_ShouldReturnAllPatients()
     {
@@ -49,7 +71,11 @@ public class PatientsControllerTests
 
         await context.SaveChangesAsync();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         // Act
         var result = await controller.GetPatients();
@@ -63,7 +89,10 @@ public class PatientsControllerTests
         Assert.Equal(2, patients.Count());
     }
 
-    // GetPatient should return the requested patient when the ID exists.
+    // =========================================================
+    // GetPatient
+    // =========================================================
+
     [Fact]
     public async Task GetPatient_ShouldReturnPatient_WhenPatientExists()
     {
@@ -83,7 +112,11 @@ public class PatientsControllerTests
         context.Patients.Add(patient);
         await context.SaveChangesAsync();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         // Act
         var result = await controller.GetPatient(patient.Id);
@@ -91,21 +124,25 @@ public class PatientsControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
 
-        var response = Assert.IsType<PatientResponseDto>(okResult.Value);
+        var response =
+            Assert.IsType<PatientResponseDto>(okResult.Value);
 
         Assert.Equal(patient.Id, response.Id);
         Assert.Equal("Ahmad", response.FirstName);
         Assert.Equal("Ali", response.LastName);
     }
 
-    // GetPatient should return 404 when the requested patient does not exist.
     [Fact]
     public async Task GetPatient_ShouldReturnNotFound_WhenPatientDoesNotExist()
     {
         // Arrange
         await using var context = CreateContext();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         // Act
         var result = await controller.GetPatient(999);
@@ -114,14 +151,143 @@ public class PatientsControllerTests
         Assert.IsType<NotFoundObjectResult>(result.Result);
     }
 
-    // CreatePatient should save the patient and return 201 Created.
+    // =========================================================
+    // GetMyPatientProfile
+    // =========================================================
+
+    [Fact]
+    public async Task GetMyPatientProfile_ShouldReturnPatient_WhenProfileIsLinked()
+    {
+        // Arrange
+        await using var context = CreateContext();
+
+        var userManagerMock = CreateUserManagerMock();
+
+        var user = new ApplicationUser
+        {
+            Id = "user-123",
+            Email = "patient@example.com",
+            UserName = "patient@example.com",
+            FullName = "Test Patient"
+        };
+
+        var patient = new Patient
+        {
+            ApplicationUserId = user.Id,
+            FirstName = "Test",
+            LastName = "Patient",
+            DateOfBirth = new DateTime(2000, 1, 1),
+            Gender = "Male",
+            PhoneNumber = "0599000000",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        context.Patients.Add(patient);
+        await context.SaveChangesAsync();
+
+        userManagerMock
+            .Setup(x => x.GetUserAsync(
+                It.IsAny<System.Security.Claims.ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
+
+        // Act
+        var result = await controller.GetMyPatientProfile();
+
+        // Assert
+        var okResult =
+            Assert.IsType<OkObjectResult>(result.Result);
+
+        var response =
+            Assert.IsType<PatientResponseDto>(okResult.Value);
+
+        Assert.Equal(patient.Id, response.Id);
+        Assert.Equal("Test", response.FirstName);
+        Assert.Equal("Patient", response.LastName);
+
+        userManagerMock.Verify(
+            x => x.GetUserAsync(
+                It.IsAny<System.Security.Claims.ClaimsPrincipal>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task GetMyPatientProfile_ShouldReturnNotFound_WhenProfileIsNotLinked()
+    {
+        // Arrange
+        await using var context = CreateContext();
+
+        var userManagerMock = CreateUserManagerMock();
+
+        var user = new ApplicationUser
+        {
+            Id = "user-123",
+            Email = "patient@example.com",
+            UserName = "patient@example.com",
+            FullName = "Test Patient"
+        };
+
+        userManagerMock
+            .Setup(x => x.GetUserAsync(
+                It.IsAny<System.Security.Claims.ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
+
+        // Act
+        var result = await controller.GetMyPatientProfile();
+
+        // Assert
+        var notFoundResult =
+            Assert.IsType<NotFoundObjectResult>(result.Result);
+
+        Assert.NotNull(notFoundResult.Value);
+    }
+
+    [Fact]
+    public async Task GetMyPatientProfile_ShouldReturnUnauthorized_WhenUserDoesNotExist()
+    {
+        // Arrange
+        await using var context = CreateContext();
+
+        var userManagerMock = CreateUserManagerMock();
+
+        userManagerMock
+            .Setup(x => x.GetUserAsync(
+                It.IsAny<System.Security.Claims.ClaimsPrincipal>()))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
+
+        // Act
+        var result = await controller.GetMyPatientProfile();
+
+        // Assert
+        Assert.IsType<UnauthorizedResult>(result.Result);
+    }
+
+    // =========================================================
+    // CreatePatient
+    // =========================================================
+
     [Fact]
     public async Task CreatePatient_ShouldCreatePatient()
     {
         // Arrange
         await using var context = CreateContext();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         var dto = new PatientCreateDto
         {
@@ -146,14 +312,16 @@ public class PatientsControllerTests
         Assert.Equal("Omar", response.FirstName);
         Assert.Equal("Khaled", response.LastName);
 
-        // Make sure the patient was actually saved in the database.
         var savedPatient = await context.Patients
             .FirstOrDefaultAsync(p => p.Id == response.Id);
 
         Assert.NotNull(savedPatient);
     }
 
-    // UpdatePatient should change the existing patient's information.
+    // =========================================================
+    // UpdatePatient
+    // =========================================================
+
     [Fact]
     public async Task UpdatePatient_ShouldUpdatePatient_WhenPatientExists()
     {
@@ -173,7 +341,11 @@ public class PatientsControllerTests
         context.Patients.Add(patient);
         await context.SaveChangesAsync();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         var dto = new PatientUpdateDto
         {
@@ -190,7 +362,8 @@ public class PatientsControllerTests
             dto);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult =
+            Assert.IsType<OkObjectResult>(result.Result);
 
         var response =
             Assert.IsType<PatientResponseDto>(okResult.Value);
@@ -200,14 +373,17 @@ public class PatientsControllerTests
         Assert.Equal("0599333333", response.PhoneNumber);
     }
 
-    // UpdatePatient should return 404 when the patient does not exist.
     [Fact]
     public async Task UpdatePatient_ShouldReturnNotFound_WhenPatientDoesNotExist()
     {
         // Arrange
         await using var context = CreateContext();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         var dto = new PatientUpdateDto
         {
@@ -225,7 +401,10 @@ public class PatientsControllerTests
         Assert.IsType<NotFoundObjectResult>(result.Result);
     }
 
-    // DeletePatient should remove the patient and return 204 No Content.
+    // =========================================================
+    // DeletePatient
+    // =========================================================
+
     [Fact]
     public async Task DeletePatient_ShouldReturnNoContent_WhenPatientExists()
     {
@@ -247,7 +426,11 @@ public class PatientsControllerTests
 
         var patientId = patient.Id;
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         // Act
         var result = await controller.DeletePatient(patientId);
@@ -255,21 +438,23 @@ public class PatientsControllerTests
         // Assert
         Assert.IsType<NoContentResult>(result);
 
-        // Make sure the patient was actually removed.
         var deletedPatient = await context.Patients
             .FirstOrDefaultAsync(p => p.Id == patientId);
 
         Assert.Null(deletedPatient);
     }
 
-    // DeletePatient should return 404 when the patient does not exist.
     [Fact]
     public async Task DeletePatient_ShouldReturnNotFound_WhenPatientDoesNotExist()
     {
         // Arrange
         await using var context = CreateContext();
 
-        var controller = new PatientsController(context);
+        var userManagerMock = CreateUserManagerMock();
+
+        var controller = new PatientsController(
+            context,
+            userManagerMock.Object);
 
         // Act
         var result = await controller.DeletePatient(999);

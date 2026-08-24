@@ -20,8 +20,12 @@ public class VitalSignsController : ControllerBase
         _context = context;
     }
 
-    // Get all vital sign records
+    // ============================================================
+    // GET: api/VitalSigns
+    // Admin, Doctor, Patient can view vital signs
+    // ============================================================
     [HttpGet]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
     public async Task<ActionResult<IEnumerable<VitalSignResponseDto>>> GetVitalSigns()
     {
         var vitalSigns = await _context.VitalSigns
@@ -43,8 +47,12 @@ public class VitalSignsController : ControllerBase
         return Ok(vitalSigns);
     }
 
-    // Get vital signs for one patient
+    // ============================================================
+    // GET: api/VitalSigns/patient/{patientId}
+    // Admin, Doctor, Patient can view patient vital signs
+    // ============================================================
     [HttpGet("patient/{patientId:int}")]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
     public async Task<ActionResult<IEnumerable<VitalSignResponseDto>>> GetPatientVitalSigns(
         int patientId)
     {
@@ -81,8 +89,12 @@ public class VitalSignsController : ControllerBase
         return Ok(vitalSigns);
     }
 
-    // Get one vital sign by ID
+    // ============================================================
+    // GET: api/VitalSigns/{id}
+    // Admin, Doctor, Patient can view one vital sign
+    // ============================================================
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
     public async Task<ActionResult<VitalSignResponseDto>> GetVitalSign(int id)
     {
         var vitalSign = await _context.VitalSigns
@@ -112,8 +124,12 @@ public class VitalSignsController : ControllerBase
         return Ok(vitalSign);
     }
 
-    // Create a new vital sign record
+    // ============================================================
+    // POST: api/VitalSigns
+    // Only Admin and Doctor can create vital signs
+    // ============================================================
     [HttpPost]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<VitalSignResponseDto>> CreateVitalSign(
         VitalSignCreateDto dto)
     {
@@ -155,15 +171,18 @@ public class VitalSignsController : ControllerBase
             Notes = vitalSign.Notes
         };
 
-        // Return the new record with its generated ID
         return CreatedAtAction(
             nameof(GetVitalSign),
             new { id = vitalSign.Id },
             response);
     }
 
-    // Update an existing vital sign
+    // ============================================================
+    // PUT: api/VitalSigns/{id}
+    // Only Admin and Doctor can update vital signs
+    // ============================================================
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<VitalSignResponseDto>> UpdateVitalSign(
         int id,
         VitalSignUpdateDto dto)
@@ -203,8 +222,12 @@ public class VitalSignsController : ControllerBase
         return Ok(response);
     }
 
-    // Delete an existing vital sign
+    // ============================================================
+    // DELETE: api/VitalSigns/{id}
+    // Only Admin and Doctor can delete vital signs
+    // ============================================================
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<IActionResult> DeleteVitalSign(int id)
     {
         var vitalSign = await _context.VitalSigns

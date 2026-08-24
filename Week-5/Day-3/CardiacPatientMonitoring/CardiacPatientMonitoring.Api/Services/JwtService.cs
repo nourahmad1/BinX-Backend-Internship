@@ -16,38 +16,71 @@ public class JwtService : IJwtService
         _configuration = configuration;
     }
 
-    public AuthTokenResult GenerateToken(ApplicationUser user)
+    public AuthTokenResult GenerateToken(
+        ApplicationUser user,
+        IList<string>? roles = null)
     {
-        // Read the JWT settings from appsettings.json
+        // Read JWT settings from appsettings.json
         var jwtSettings = _configuration.GetSection("Jwt");
 
         var issuer = jwtSettings["Issuer"]
-            ?? throw new InvalidOperationException("JWT Issuer is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT Issuer is not configured.");
 
         var audience = jwtSettings["Audience"]
-            ?? throw new InvalidOperationException("JWT Audience is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT Audience is not configured.");
 
         var secretKey = jwtSettings["SecretKey"]
-            ?? throw new InvalidOperationException("JWT SecretKey is not configured.");
+            ?? throw new InvalidOperationException(
+                "JWT SecretKey is not configured.");
 
-        // Use the configured expiry time, or 60 minutes if it is missing
+        // Use configured expiry time,
+        // or 60 minutes if it is missing
         var expiryMinutes = int.TryParse(
             jwtSettings["ExpiryMinutes"],
             out var minutes)
             ? minutes
             : 60;
 
-        var expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
+        var expiresAt = DateTime.UtcNow.AddMinutes(
+            expiryMinutes);
 
-        // Add the user information that will be stored inside the token
+        // Add user information to the token
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.Name, user.FullName)
+            new(
+                JwtRegisteredClaimNames.Sub,
+                user.Id),
+
+            new(
+                JwtRegisteredClaimNames.Email,
+                user.Email ?? string.Empty),
+
+            new(
+                ClaimTypes.NameIdentifier,
+                user.Id),
+
+            new(
+                ClaimTypes.Email,
+                user.Email ?? string.Empty),
+
+            new(
+                ClaimTypes.Name,
+                user.FullName)
         };
+
+        // Add user's roles to the JWT
+        if (roles is not null)
+        {
+            foreach (var role in roles)
+            {
+                claims.Add(
+                    new Claim(
+                        ClaimTypes.Role,
+                        role));
+            }
+        }
 
         // Create the key used to sign the token
         var key = new SymmetricSecurityKey(
@@ -57,7 +90,7 @@ public class JwtService : IJwtService
             key,
             SecurityAlgorithms.HmacSha256);
 
-        // Create the JWT with the issuer, audience, claims, and expiration time
+        // Create JWT
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
@@ -65,10 +98,12 @@ public class JwtService : IJwtService
             expires: expiresAt,
             signingCredentials: credentials);
 
-        // Convert the token to a string and return it with its expiry time
+        // Convert token to string
         return new AuthTokenResult
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = new JwtSecurityTokenHandler()
+                .WriteToken(token),
+
             ExpiresAt = expiresAt
         };
     }

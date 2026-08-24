@@ -4,50 +4,81 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CardiacPatientMonitoring.Api.Data;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+public class AppDbContext
+    : IdentityDbContext<ApplicationUser>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    public AppDbContext(
+        DbContextOptions<AppDbContext> options)
         : base(options)
     {
     }
 
-    // Database tables used by the application
-    public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Patient> Patients =>
+        Set<Patient>();
 
-    public DbSet<VitalSign> VitalSigns => Set<VitalSign>();
+    public DbSet<VitalSign> VitalSigns =>
+        Set<VitalSign>();
 
-    public DbSet<Medication> Medications => Set<Medication>();
+    public DbSet<Medication> Medications =>
+        Set<Medication>();
 
-    public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<Appointment> Appointments =>
+        Set<Appointment>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(
+        ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // A patient can have multiple vital sign records
+        // ApplicationUser <-> Patient
         modelBuilder.Entity<Patient>()
-            .HasMany(patient => patient.VitalSigns)
-            .WithOne(vitalSign => vitalSign.Patient)
-            .HasForeignKey(vitalSign => vitalSign.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(patient =>
+                patient.ApplicationUser)
+            .WithOne(user =>
+                user.Patient)
+            .HasForeignKey<Patient>(
+                patient =>
+                    patient.ApplicationUserId)
+            .OnDelete(
+                DeleteBehavior.SetNull);
 
-        // A patient can have multiple medications
+        // Patient -> VitalSigns
         modelBuilder.Entity<Patient>()
-            .HasMany(patient => patient.Medications)
-            .WithOne(medication => medication.Patient)
-            .HasForeignKey(medication => medication.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(patient =>
+                patient.VitalSigns)
+            .WithOne(vitalSign =>
+                vitalSign.Patient)
+            .HasForeignKey(vitalSign =>
+                vitalSign.PatientId)
+            .OnDelete(
+                DeleteBehavior.Cascade);
 
-        // A patient can have multiple appointments
+        // Patient -> Medications
         modelBuilder.Entity<Patient>()
-            .HasMany(patient => patient.Appointments)
-            .WithOne(appointment => appointment.Patient)
-            .HasForeignKey(appointment => appointment.PatientId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(patient =>
+                patient.Medications)
+            .WithOne(medication =>
+                medication.Patient)
+            .HasForeignKey(medication =>
+                medication.PatientId)
+            .OnDelete(
+                DeleteBehavior.Cascade);
 
-        // Store oxygen saturation with two decimal places
+        // Patient -> Appointments
+        modelBuilder.Entity<Patient>()
+            .HasMany(patient =>
+                patient.Appointments)
+            .WithOne(appointment =>
+                appointment.Patient)
+            .HasForeignKey(appointment =>
+                appointment.PatientId)
+            .OnDelete(
+                DeleteBehavior.Cascade);
+
+        // Oxygen saturation precision
         modelBuilder.Entity<VitalSign>()
-            .Property(vitalSign => vitalSign.OxygenSaturation)
+            .Property(vitalSign =>
+                vitalSign.OxygenSaturation)
             .HasPrecision(5, 2);
     }
 }

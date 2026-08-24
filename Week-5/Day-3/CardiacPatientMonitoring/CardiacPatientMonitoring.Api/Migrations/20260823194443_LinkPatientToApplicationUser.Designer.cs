@@ -4,6 +4,7 @@ using CardiacPatientMonitoring.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CardiacPatientMonitoring.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260823194443_LinkPatientToApplicationUser")]
+    partial class LinkPatientToApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,9 +177,6 @@ namespace CardiacPatientMonitoring.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -199,11 +199,14 @@ namespace CardiacPatientMonitoring.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId")
+                    b.HasIndex("UserId")
                         .IsUnique()
-                        .HasFilter("[ApplicationUserId] IS NOT NULL");
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Patients");
                 });
@@ -402,12 +405,12 @@ namespace CardiacPatientMonitoring.Api.Migrations
 
             modelBuilder.Entity("CardiacPatientMonitoring.Api.Entities.Patient", b =>
                 {
-                    b.HasOne("CardiacPatientMonitoring.Api.Entities.ApplicationUser", "ApplicationUser")
-                        .WithOne("Patient")
-                        .HasForeignKey("CardiacPatientMonitoring.Api.Entities.Patient", "ApplicationUserId")
+                    b.HasOne("CardiacPatientMonitoring.Api.Entities.ApplicationUser", "User")
+                        .WithOne()
+                        .HasForeignKey("CardiacPatientMonitoring.Api.Entities.Patient", "UserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CardiacPatientMonitoring.Api.Entities.VitalSign", b =>
@@ -470,11 +473,6 @@ namespace CardiacPatientMonitoring.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CardiacPatientMonitoring.Api.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("CardiacPatientMonitoring.Api.Entities.Patient", b =>

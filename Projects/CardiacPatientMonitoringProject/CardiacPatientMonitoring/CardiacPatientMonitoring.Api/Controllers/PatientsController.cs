@@ -21,11 +21,11 @@ public class PatientsController : ControllerBase
 
     // =========================================================
     // GET: api/Patients
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<IEnumerable<PatientResponseDto>>> GetPatients()
     {
         var patients = await _context.Patients
@@ -49,11 +49,11 @@ public class PatientsController : ControllerBase
 
     // =========================================================
     // GET: api/Patients/{id}
-    // Admin, Doctor, Nurse
+    // Admin, Doctor
     // =========================================================
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin,Doctor,Nurse")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<PatientResponseDto>> GetPatient(int id)
     {
         var patient = await _context.Patients
@@ -168,11 +168,11 @@ public class PatientsController : ControllerBase
 
     // =========================================================
     // DELETE: api/Patients/{id}
-    // Admin, Doctor
+    // Admin only
     // =========================================================
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin,Doctor")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePatient(int id)
     {
         var patient = await _context.Patients
