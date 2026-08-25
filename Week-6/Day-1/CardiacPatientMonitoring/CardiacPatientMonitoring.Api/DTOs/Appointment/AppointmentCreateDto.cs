@@ -1,28 +1,22 @@
-namespace CardiacPatientMonitoring.Api.Entities;
+namespace CardiacPatientMonitoring.Api.DTOs;
 
-public class Appointment
+public class AppointmentCreateDto
 {
-    // Appointment ID 
-    public int Id { get; set; }
-
-    // ID of the patient for this appointment
+    // Patient this appointment belongs to
     public int PatientId { get; set; }
 
     // Date and time of the appointment
     public DateTime AppointmentDate { get; set; }
 
-    // Doctor assigned to the appointment
+    // Doctor handling the appointment
     public string DoctorName { get; set; } = string.Empty;
 
     // Reason for the appointment
     public string Reason { get; set; } = string.Empty;
 
-    // Current status of the appointment
+    // New appointments start as scheduled by default
     public string Status { get; set; } = "Scheduled";
 
-    // Optional notes
+    // Optional notes about the appointment
     public string? Notes { get; set; }
-
-    // Navigation property back to the patient
-    public Patient Patient { get; set; } = null!;
 }
