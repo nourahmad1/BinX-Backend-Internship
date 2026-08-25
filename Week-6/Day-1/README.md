@@ -291,49 +291,10 @@ One patient can have multiple appointments.
 
 The complete ERD was designed using **draw.io** and represents the database blueprint used for the EF Core implementation.
 
-> 🖼️ Insert the final draw.io ERD screenshot here.
+<img width="2612" height="4168" alt="image" src="https://github.com/user-attachments/assets/286f085d-8ffa-4e6b-95a2-ed6f37b4c055" />
 
-```text
-┌─────────────────────────┐
-│    ApplicationUser      │
-├─────────────────────────┤
-│ PK Id : string          │
-│ FullName : string       │
-│ UserName : string       │
-│ Email : string          │
-│ PasswordHash : string   │
-└────────────┬────────────┘
-             │
-             │ 1 : 0..1
-             ▼
-┌─────────────────────────┐
-│        Patient          │
-├─────────────────────────┤
-│ PK Id : int             │
-│ FK ApplicationUserId    │
-│ FirstName : string      │
-│ LastName : string       │
-│ DateOfBirth : DateTime  │
-│ Gender : string         │
-│ PhoneNumber : string    │
-│ CreatedAt : DateTime    │
-└──────┬──────┬───────┬───┘
-       │      │       │
-     1 : *  1 : *    1 : *
-       │      │       │
-       ▼      ▼       ▼
-┌──────────┐ ┌────────────┐ ┌─────────────┐
-│VitalSign │ │ Medication │ │ Appointment │
-├──────────┤ ├────────────┤ ├─────────────┤
-│PK Id     │ │PK Id       │ │PK Id        │
-│FK Patient│ │FK Patient  │ │FK Patient   │
-│HeartRate │ │Name        │ │Date         │
-│Systolic  │ │Dosage      │ │DoctorName   │
-│Diastolic │ │Frequency   │ │Reason       │
-│Oxygen    │ │StartDate   │ │Status       │
-│RecordedAt│ │EndDate     │ │Notes        │
-│Notes     │ │Notes       │ └─────────────┘
-└──────────┘ └────────────┘
+
+
 ```
 
 ### Primary keys & foreign keys
