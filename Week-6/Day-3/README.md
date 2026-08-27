@@ -217,7 +217,6 @@ Day 2 was about proving the data model and database were correct. Day 3 is about
 | Filter — `gender` | Swagger | ✅ Verified |
 | Sort — first name / last name / created date | Swagger | ✅ Verified |
 | Combined pagination + filtering + sorting | Swagger | ✅ Verified |
-| Postman regression suite | *(intentionally postponed)* | ⏳ Day 5 |
 
 Postman testing was deliberately postponed to Day 5, where the endpoint will be run through the full set of parameter combinations and the results documented.
 
