@@ -1,3 +1,4 @@
+
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -5,6 +6,7 @@ using CardiacPatientMonitoring.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardiacPatientMonitoring.Api.Controllers;
 
@@ -26,29 +28,28 @@ public class AuthController : ControllerBase
         _context = context;
     }
 
-    // Register a new doctor or patient account.
+    // =========================================================
+    // POST: api/Auth/register
+    // =========================================================
     [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponseDto>> Register(
         RegisterDto dto)
     {
-        // Public registration is only available for doctors and patients.
-        var allowedRoles = new[]
-        {
-            "DOCTOR",
-            "PATIENT"
-        };
+        // Only Doctor and Patient can register publicly.
+        // Admin accounts should not be created through this endpoint.
+        var allowedRoles = new[] { "Doctor", "Patient" };
 
         if (!allowedRoles.Contains(dto.Role))
         {
             return BadRequest(new
             {
                 message =
-                    "Invalid role. Only DOCTOR or PATIENT can register."
+                    "Invalid role. Only Doctor or Patient can register."
             });
         }
 
-        // Check whether the email is already registered.
+        // Check if an account with this email already exists.
         var existing =
             await _userManager.FindByEmailAsync(dto.Email);
 
@@ -92,6 +93,7 @@ public class AuthController : ControllerBase
 
         if (!roleResult.Succeeded)
         {
+            // Remove the user if the role could not be assigned.
             await _userManager.DeleteAsync(user);
 
             return BadRequest(new
@@ -102,9 +104,13 @@ public class AuthController : ControllerBase
             });
         }
 
-        // Patients also get a patient profile linked to their account.
-        if (dto.Role == "PATIENT")
+        // =====================================================
+        // If the registered user is a Patient,
+        // create and link a Patient profile.
+        // =====================================================
+        if (dto.Role == "Patient")
         {
+            // Split the full name into first name and last name.
             var nameParts = dto.FullName
                 .Trim()
                 .Split(
@@ -123,11 +129,14 @@ public class AuthController : ControllerBase
 
             var patient = new Patient
             {
+                // This is the important link.
                 ApplicationUserId = user.Id,
 
                 FirstName = firstName,
                 LastName = lastName,
 
+                // These values can be completed later
+                // through the patient profile update.
                 DateOfBirth = DateTime.MinValue,
                 Gender = string.Empty,
                 PhoneNumber = string.Empty,
@@ -139,24 +148,30 @@ public class AuthController : ControllerBase
             await _context.SaveChangesAsync();
         }
 
+        // Get the user's roles.
         var roles =
             await _userManager.GetRolesAsync(user);
 
+        // Generate JWT containing the user's roles.
         return Ok(
             _jwtService.GenerateToken(
                 user,
                 roles));
     }
 
-    // Login with email and password.
+    // =========================================================
+    // POST: api/Auth/login
+    // =========================================================
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponseDto>> Login(
         LoginDto dto)
     {
+        // Find the user by email.
         var user =
             await _userManager.FindByEmailAsync(dto.Email);
 
+        // Validate credentials.
         if (user is null ||
             !await _userManager.CheckPasswordAsync(
                 user,
@@ -168,20 +183,25 @@ public class AuthController : ControllerBase
             });
         }
 
+        // Get the roles assigned to the user.
         var roles =
             await _userManager.GetRolesAsync(user);
 
+        // Generate JWT containing the user's roles.
         return Ok(
             _jwtService.GenerateToken(
                 user,
                 roles));
     }
 
-    // Return information about the currently logged-in user.
+    // =========================================================
+    // GET: api/Auth/me
+    // =========================================================
     [Authorize]
     [HttpGet("me")]
     public async Task<ActionResult<object>> Me()
     {
+        // Get the currently authenticated user.
         var user =
             await _userManager.GetUserAsync(User);
 
@@ -190,6 +210,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        // Get the user's roles.
         var roles =
             await _userManager.GetRolesAsync(user);
 
