@@ -1,4 +1,3 @@
-
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -20,39 +19,23 @@ public class AppointmentsController : ControllerBase
         _context = context;
     }
 
-    // Get appointments with optional filters, sorting, and pagination.
+    // =========================================================
+    // GET: api/Appointments
+    // Admin, Doctor, and Patient can view appointments
+    // =========================================================
     [HttpGet]
-    [Authorize(Roles = "ADMIN,DOCTOR,PATIENT")]
-    public async Task<ActionResult> GetAppointments(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] int? patientId = null,
-        [FromQuery] string? status = null,
-        [FromQuery] string? doctorName = null,
-        [FromQuery] string? sort = "date")
+    [Authorize(Roles = "Admin,Doctor,Patient")]
+    public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
+        GetAppointments(
+            [FromQuery] int? patientId,
+            [FromQuery] string? status,
+            [FromQuery] string? doctorName)
     {
-        // Keep page values sensible.
-        if (page < 1)
-        {
-            page = 1;
-        }
-
-        if (pageSize < 1)
-        {
-            pageSize = 10;
-        }
-
-        if (pageSize > 100)
-        {
-            pageSize = 100;
-        }
-
-        // Start with all appointments.
         var query = _context.Appointments
             .AsNoTracking()
             .AsQueryable();
 
-        // Filter by patient when a patient ID is provided.
+        // Filter by patient
         if (patientId.HasValue)
         {
             query = query.Where(
@@ -60,7 +43,7 @@ public class AppointmentsController : ControllerBase
                     appointment.PatientId == patientId.Value);
         }
 
-        // Filter by appointment status.
+        // Filter by status
         if (!string.IsNullOrWhiteSpace(status))
         {
             var normalizedStatus = status.Trim();
@@ -70,7 +53,7 @@ public class AppointmentsController : ControllerBase
                     appointment.Status == normalizedStatus);
         }
 
-        // Search appointments by doctor name.
+        // Search by doctor name
         if (!string.IsNullOrWhiteSpace(doctorName))
         {
             var normalizedDoctorName = doctorName.Trim();
@@ -81,84 +64,39 @@ public class AppointmentsController : ControllerBase
                         normalizedDoctorName));
         }
 
-        // Count the filtered appointments before pagination.
-        var totalCount = await query.CountAsync();
-
-        // Apply the requested sorting.
-        sort = sort?.Trim().ToLower();
-
-        query = sort switch
-        {
-            "date_asc" =>
-                query.OrderBy(
-                    appointment =>
-                        appointment.AppointmentDate),
-
-            "doctor" =>
-                query.OrderBy(
-                    appointment =>
-                        appointment.DoctorName),
-
-            "status" =>
-                query.OrderBy(
-                    appointment =>
-                        appointment.Status),
-
-            _ =>
-                query.OrderByDescending(
-                    appointment =>
-                        appointment.AppointmentDate)
-        };
-
-        // Calculate the total number of pages.
-        var totalPages =
-            (int)Math.Ceiling(
-                totalCount / (double)pageSize);
-
-        // Return only the records requested for this page.
-        // Select projects the database entity into a DTO.
+        // Newest appointments first
         var appointments = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .OrderByDescending(
+                appointment => appointment.AppointmentDate)
             .Select(appointment => new AppointmentResponseDto
             {
                 Id = appointment.Id,
                 PatientId = appointment.PatientId,
-                AppointmentDate =
-                    appointment.AppointmentDate,
-                DoctorName =
-                    appointment.DoctorName,
-                Reason =
-                    appointment.Reason,
-                Status =
-                    appointment.Status,
-                Notes =
-                    appointment.Notes
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .ToListAsync();
 
-        return Ok(new
-        {
-            page,
-            pageSize,
-            totalCount,
-            totalPages,
-            data = appointments
-        });
+        return Ok(appointments);
     }
 
-    // Get all appointments for one patient.
+    // =========================================================
+    // GET: api/Appointments/patient/{patientId}
+    // Admin, Doctor, and Patient can view patient appointments
+    // =========================================================
     [HttpGet("patient/{patientId:int}")]
-    [Authorize(Roles = "ADMIN,DOCTOR,PATIENT")]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
     public async Task<ActionResult<IEnumerable<AppointmentResponseDto>>>
         GetPatientAppointments(int patientId)
     {
-        // Make sure the patient exists.
+        // Check if patient exists
         var patientExists = await _context.Patients
             .AsNoTracking()
             .AnyAsync(
-                patient =>
-                    patient.Id == patientId);
+                patient => patient.Id == patientId);
 
         if (!patientExists)
         {
@@ -175,31 +113,28 @@ public class AppointmentsController : ControllerBase
                 appointment =>
                     appointment.PatientId == patientId)
             .OrderByDescending(
-                appointment =>
-                    appointment.AppointmentDate)
+                appointment => appointment.AppointmentDate)
             .Select(appointment => new AppointmentResponseDto
             {
                 Id = appointment.Id,
                 PatientId = appointment.PatientId,
-                AppointmentDate =
-                    appointment.AppointmentDate,
-                DoctorName =
-                    appointment.DoctorName,
-                Reason =
-                    appointment.Reason,
-                Status =
-                    appointment.Status,
-                Notes =
-                    appointment.Notes
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .ToListAsync();
 
         return Ok(appointments);
     }
 
-    // Get one appointment by ID.
+    // =========================================================
+    // GET: api/Appointments/{id}
+    // Admin, Doctor, and Patient can view one appointment
+    // =========================================================
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "ADMIN,DOCTOR,PATIENT")]
+    [Authorize(Roles = "Admin,Doctor,Patient")]
     public async Task<ActionResult<AppointmentResponseDto>>
         GetAppointment(int id)
     {
@@ -212,16 +147,11 @@ public class AppointmentsController : ControllerBase
             {
                 Id = appointment.Id,
                 PatientId = appointment.PatientId,
-                AppointmentDate =
-                    appointment.AppointmentDate,
-                DoctorName =
-                    appointment.DoctorName,
-                Reason =
-                    appointment.Reason,
-                Status =
-                    appointment.Status,
-                Notes =
-                    appointment.Notes
+                AppointmentDate = appointment.AppointmentDate,
+                DoctorName = appointment.DoctorName,
+                Reason = appointment.Reason,
+                Status = appointment.Status,
+                Notes = appointment.Notes
             })
             .FirstOrDefaultAsync();
 
@@ -237,19 +167,21 @@ public class AppointmentsController : ControllerBase
         return Ok(appointment);
     }
 
-    // Create a new appointment.
+    // =========================================================
+    // POST: api/Appointments
+    // Only Admin and Doctor can create appointments
+    // =========================================================
     [HttpPost]
-    [Authorize(Roles = "ADMIN,DOCTOR")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<AppointmentResponseDto>>
         CreateAppointment(
             [FromBody] AppointmentCreateDto dto)
     {
-        // Check that the patient exists before creating the appointment.
+        // Make sure the patient exists
         var patientExists = await _context.Patients
             .AsNoTracking()
             .AnyAsync(
-                patient =>
-                    patient.Id == dto.PatientId);
+                patient => patient.Id == dto.PatientId);
 
         if (!patientExists)
         {
@@ -277,15 +209,20 @@ public class AppointmentsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
+        var response = ToDto(appointment);
+
         return CreatedAtAction(
             nameof(GetAppointment),
             new { id = appointment.Id },
-            ToDto(appointment));
+            response);
     }
 
-    // Update an existing appointment.
+    // =========================================================
+    // PUT: api/Appointments/{id}
+    // Only Admin and Doctor can update appointments
+    // =========================================================
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "ADMIN,DOCTOR")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<ActionResult<AppointmentResponseDto>>
         UpdateAppointment(
             int id,
@@ -327,9 +264,12 @@ public class AppointmentsController : ControllerBase
         return Ok(ToDto(appointment));
     }
 
-    // Delete an appointment.
+    // =========================================================
+    // DELETE: api/Appointments/{id}
+    // Only Admin and Doctor can delete appointments
+    // =========================================================
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "ADMIN,DOCTOR")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<IActionResult>
         DeleteAppointment(int id)
     {
@@ -354,7 +294,9 @@ public class AppointmentsController : ControllerBase
         return NoContent();
     }
 
-    // Convert the entity to the DTO returned by the API.
+    // =========================================================
+    // Helper method
+    // =========================================================
     private static AppointmentResponseDto ToDto(
         Appointment appointment)
     {
@@ -362,16 +304,11 @@ public class AppointmentsController : ControllerBase
         {
             Id = appointment.Id,
             PatientId = appointment.PatientId,
-            AppointmentDate =
-                appointment.AppointmentDate,
-            DoctorName =
-                appointment.DoctorName,
-            Reason =
-                appointment.Reason,
-            Status =
-                appointment.Status,
-            Notes =
-                appointment.Notes
+            AppointmentDate = appointment.AppointmentDate,
+            DoctorName = appointment.DoctorName,
+            Reason = appointment.Reason,
+            Status = appointment.Status,
+            Notes = appointment.Notes
         };
     }
 }

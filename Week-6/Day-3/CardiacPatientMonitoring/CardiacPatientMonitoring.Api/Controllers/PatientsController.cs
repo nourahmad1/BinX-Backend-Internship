@@ -1,3 +1,4 @@
+
 using CardiacPatientMonitoring.Api.Data;
 using CardiacPatientMonitoring.Api.DTOs;
 using CardiacPatientMonitoring.Api.Entities;
@@ -24,18 +25,18 @@ public class PatientsController : ControllerBase
         _userManager = userManager;
     }
 
-    // Get a paginated list of patients.
-    // Admins and doctors can search, filter, sort, and browse patients by page.
+    // Get patients with pagination, search, gender filter, and sorting
+    // Admin and Doctor can view all patients
     [HttpGet]
     [Authorize(Roles = "ADMIN,DOCTOR")]
-    public async Task<ActionResult<object>> GetPatients(
+    public async Task<ActionResult> GetPatients(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] string? gender = null,
-        [FromQuery] string? sort = "lastname")
+        [FromQuery] string? sort = null)
     {
-        // Keep the page values reasonable.
+        // Make sure page values are valid
         if (page < 1)
         {
             page = 1;
@@ -46,75 +47,68 @@ public class PatientsController : ControllerBase
             pageSize = 10;
         }
 
-        if (pageSize > 100)
-        {
-            pageSize = 100;
-        }
+        var query = _context.Patients
+            .AsNoTracking()
+            .AsQueryable();
 
-        // Start with the patients query.
-        IQueryable<Patient> query = _context.Patients
-            .AsNoTracking();
-
-        // Search by first name, last name, or phone number.
+        // Search by first name, last name, or phone number
         if (!string.IsNullOrWhiteSpace(search))
         {
-            search = search.Trim();
+            var normalizedSearch = search.Trim();
 
             query = query.Where(patient =>
-                patient.FirstName.Contains(search) ||
-                patient.LastName.Contains(search) ||
-                patient.PhoneNumber.Contains(search));
+                patient.FirstName.Contains(normalizedSearch) ||
+                patient.LastName.Contains(normalizedSearch) ||
+                patient.PhoneNumber.Contains(normalizedSearch));
         }
 
-        // Filter by gender when it is provided.
+        // Filter by gender
         if (!string.IsNullOrWhiteSpace(gender))
         {
-            gender = gender.Trim();
+            var normalizedGender = gender.Trim();
 
             query = query.Where(patient =>
-                patient.Gender == gender);
+                patient.Gender == normalizedGender);
         }
 
-        // Apply sorting.
-        query = sort?.ToLower() switch
+        // Sort patients
+        if (!string.IsNullOrWhiteSpace(sort))
         {
-            "firstname" =>
-                query.OrderBy(patient => patient.FirstName),
+            var normalizedSort = sort.Trim().ToLower();
 
-            "lastname" =>
-                query.OrderBy(patient => patient.LastName),
+            query = normalizedSort switch
+            {
+                "firstname" => query
+                    .OrderBy(patient => patient.FirstName),
 
-            "lastname_desc" =>
-                query.OrderByDescending(patient => patient.LastName),
+                "lastname" => query
+                    .OrderBy(patient => patient.LastName)
+                    .ThenBy(patient => patient.FirstName),
 
-            "firstname_desc" =>
-                query.OrderByDescending(patient => patient.FirstName),
+                "createdat" => query
+                    .OrderBy(patient => patient.CreatedAt),
 
-            "dateofbirth" =>
-                query.OrderBy(patient => patient.DateOfBirth),
+                _ => query
+                    .OrderBy(patient => patient.LastName)
+                    .ThenBy(patient => patient.FirstName)
+            };
+        }
+        else
+        {
+            // Default sorting by last name and then first name
+            query = query
+                .OrderBy(patient => patient.LastName)
+                .ThenBy(patient => patient.FirstName);
+        }
 
-            "dateofbirth_desc" =>
-                query.OrderByDescending(patient => patient.DateOfBirth),
-
-            "createdat" =>
-                query.OrderBy(patient => patient.CreatedAt),
-
-            "createdat_desc" =>
-                query.OrderByDescending(patient => patient.CreatedAt),
-
-            _ =>
-                query.OrderBy(patient => patient.LastName)
-        };
-
-        // Count the filtered records before pagination.
+        // Count patients after applying the filters
         var totalCount = await query.CountAsync();
 
-        // Calculate how many pages are available.
-        var totalPages =
-            (int)Math.Ceiling(totalCount / (double)pageSize);
+        // Calculate the total number of pages
+        var totalPages = (int)Math.Ceiling(
+            totalCount / (double)pageSize);
 
-        // Project directly to the DTO and only retrieve the fields
-        // that the API actually needs.
+        // Get only the patients for the requested page
         var patients = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -140,11 +134,12 @@ public class PatientsController : ControllerBase
         });
     }
 
-    // Patients can view their own profile.
+    // Patient can view their own profile
     [HttpGet("me")]
     [Authorize(Roles = "PATIENT")]
     public async Task<ActionResult<PatientResponseDto>> GetMyPatientProfile()
     {
+        // Get the currently authenticated Identity user
         var user = await _userManager.GetUserAsync(User);
 
         if (user is null)
@@ -152,6 +147,7 @@ public class PatientsController : ControllerBase
             return Unauthorized();
         }
 
+        // Find the patient profile linked to this user
         var patient = await _context.Patients
             .AsNoTracking()
             .Where(patient =>
@@ -179,7 +175,8 @@ public class PatientsController : ControllerBase
         return Ok(patient);
     }
 
-    // Admins and doctors can get one patient by ID.
+    // Get one patient by ID
+    // Admin and Doctor can view any patient
     [HttpGet("{id:int}")]
     [Authorize(Roles = "ADMIN,DOCTOR")]
     public async Task<ActionResult<PatientResponseDto>> GetPatient(int id)
@@ -210,7 +207,8 @@ public class PatientsController : ControllerBase
         return Ok(patient);
     }
 
-    // Admins and doctors can create patient records.
+    // Create a new patient
+    // Admin and Doctor can create patients
     [HttpPost]
     [Authorize(Roles = "ADMIN,DOCTOR")]
     public async Task<ActionResult<PatientResponseDto>> CreatePatient(
@@ -218,11 +216,11 @@ public class PatientsController : ControllerBase
     {
         var patient = new Patient
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
+            FirstName = dto.FirstName.Trim(),
+            LastName = dto.LastName.Trim(),
             DateOfBirth = dto.DateOfBirth,
-            Gender = dto.Gender,
-            PhoneNumber = dto.PhoneNumber,
+            Gender = dto.Gender.Trim(),
+            PhoneNumber = dto.PhoneNumber.Trim(),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -246,7 +244,8 @@ public class PatientsController : ControllerBase
             response);
     }
 
-    // Admins and doctors can update patient information.
+    // Update an existing patient
+    // Admin and Doctor can update patients
     [HttpPut("{id:int}")]
     [Authorize(Roles = "ADMIN,DOCTOR")]
     public async Task<ActionResult<PatientResponseDto>> UpdatePatient(
@@ -254,7 +253,8 @@ public class PatientsController : ControllerBase
         PatientUpdateDto dto)
     {
         var patient = await _context.Patients
-            .FirstOrDefaultAsync(patient => patient.Id == id);
+            .FirstOrDefaultAsync(
+                patient => patient.Id == id);
 
         if (patient is null)
         {
@@ -264,11 +264,11 @@ public class PatientsController : ControllerBase
             });
         }
 
-        patient.FirstName = dto.FirstName;
-        patient.LastName = dto.LastName;
+        patient.FirstName = dto.FirstName.Trim();
+        patient.LastName = dto.LastName.Trim();
         patient.DateOfBirth = dto.DateOfBirth;
-        patient.Gender = dto.Gender;
-        patient.PhoneNumber = dto.PhoneNumber;
+        patient.Gender = dto.Gender.Trim();
+        patient.PhoneNumber = dto.PhoneNumber.Trim();
 
         await _context.SaveChangesAsync();
 
@@ -286,13 +286,15 @@ public class PatientsController : ControllerBase
         return Ok(response);
     }
 
-    // Only admins can delete patients.
+    // Delete a patient
+    // Only Admin can delete patients
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> DeletePatient(int id)
     {
         var patient = await _context.Patients
-            .FirstOrDefaultAsync(patient => patient.Id == id);
+            .FirstOrDefaultAsync(
+                patient => patient.Id == id);
 
         if (patient is null)
         {
